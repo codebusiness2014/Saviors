@@ -15,11 +15,11 @@ This game will be build using Vanilla JS and HTML5.
 
 ### Instructions
 
-[/images/instructions.png]
+![Instructions](images/instructions.png)
 
 ### Game frame
 
-[[/images/game.png]]
+![Game frame](images/game.png)
 
 
 ## Implementation Timeline
