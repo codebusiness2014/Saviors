@@ -15,7 +15,7 @@ This game will be build using Vanilla JS and HTML5.
 
 ### Instructions
 
-[[/images/instructions.png]]
+[/images/instructions.png]
 
 ### Game frame
 
