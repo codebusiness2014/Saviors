@@ -11,7 +11,7 @@ This game will be build using Vanilla JS and HTML5.
 
 ### Waiting for player
 
-[[/images/play.png]]
+![Waiting for player](images/play.png)
 
 ### Instructions
 
