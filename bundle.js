@@ -353,8 +353,8 @@ var Aircraft = function () {
       this.internalClick += 2;
       // this.ctx.fillStyle = "green";
       // this.ctx.fillRect(this.x, this.y, this.width, this.height);
-      if (this.internalClick % 10 === 0) {
-        if (this.count > 96) {
+      if (this.internalClick % 20 === 0) {
+        if (this.count === 96) {
           this.count = 0;
         } else {
           this.count += 32;
@@ -373,7 +373,8 @@ var Aircraft = function () {
       } else if (this.rightPressed && this.x < this.ctx.canvas.width - this.width - 15) {
         this.x += 15;
       } else if (this.spacePressed) {
-        this.bullets.push(new Bullets(this.x + 5, this.y, 5, 5, this.ctx));
+        this.bullets.push(new Bullets(this.x, this.y, 5, 5, this.ctx));
+        this.bullets.push(new Bullets(this.x + 25, this.y, 5, 5, this.ctx));
       }
     }
   }, {
@@ -465,17 +466,21 @@ var Bullet = function () {
     this.ctx = ctx;
     this.draw = this.draw.bind(this);
     this.move = this.move.bind(this);
+    this.image = new Image();
+    this.image.src = 'images/space_bullets.png';
   }
 
   _createClass(Bullet, [{
-    key: "draw",
+    key: 'draw',
     value: function draw() {
-      this.ctx.fillStyle = "blue";
-      this.ctx.fillRect(this.x, this.y, this.width, this.height);
+      this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x, this.y - 3, this.width, this.height);
+
+      // this.ctx.fillStyle = "blue";
+      // this.ctx.fillRect(this.x, this.y, this.width, this.height);
       this.move();
     }
   }, {
-    key: "move",
+    key: 'move',
     value: function move() {
       if (this.y > 0) {
         this.y -= 3;
