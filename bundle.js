@@ -333,9 +333,11 @@ var Aircraft = function () {
     this.spacePressed = false;
 
     this.image = new Image();
-    this.image.src = 'images/ships_three.png';
+    this.image.src = 'images/Lightning.png';
 
     this.bullets = [];
+    this.count = 0;
+    this.internalClick = 0;
 
     this.bulletConditional = this.bulletConditional.bind(this);
   }
@@ -343,10 +345,23 @@ var Aircraft = function () {
   _createClass(Aircraft, [{
     key: 'draw',
     value: function draw() {
+      // if (this.count === 96) {
+      //   this.count = 0;
+      // } else {
+      //   this.count += 3;
+      // }
+      this.internalClick += 2;
       // this.ctx.fillStyle = "green";
       // this.ctx.fillRect(this.x, this.y, this.width, this.height);
+      if (this.internalClick % 10 === 0) {
+        if (this.count > 96) {
+          this.count = 0;
+        } else {
+          this.count += 32;
+        }
+      }
 
-      this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x - 7, this.y, 30, 30);
+      this.ctx.drawImage(this.image, this.count, 0, 30, 30, this.x - 7, this.y, 40, 40);
       this.bulletConditional();
 
       if (this.upPressed && this.y > this.width) {
