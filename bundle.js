@@ -288,7 +288,6 @@ var Game = function () {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.aircraft.draw();
       this.aircraft.bullets.forEach(function (bullet) {
-        if (bullet.y < 0) {}
         bullet.draw();
         bullet.move();
       });
@@ -333,14 +332,23 @@ var Aircraft = function () {
     this.rightPressed = false;
     this.spacePressed = false;
 
+    this.image = new Image();
+    this.image.src = 'images/ships_three.png';
+
     this.bullets = [];
+
+    this.bulletConditional = this.bulletConditional.bind(this);
   }
 
   _createClass(Aircraft, [{
     key: 'draw',
     value: function draw() {
-      this.ctx.fillStyle = "green";
-      this.ctx.fillRect(this.x, this.y, this.width, this.height);
+      // this.ctx.fillStyle = "green";
+      // this.ctx.fillRect(this.x, this.y, this.width, this.height);
+
+      this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x - 7, this.y, 30, 30);
+      this.bulletConditional();
+
       if (this.upPressed && this.y > this.width) {
         this.y -= 15;
       } else if (this.downPressed && this.y < this.ctx.canvas.height - this.width - 10) {
@@ -350,30 +358,41 @@ var Aircraft = function () {
       } else if (this.rightPressed && this.x < this.ctx.canvas.width - this.width - 15) {
         this.x += 15;
       } else if (this.spacePressed) {
-        this.bullets.push(new Bullets(this.x, this.y, this.width, this.height, this.ctx));
+        this.bullets.push(new Bullets(this.x + 5, this.y, 5, 5, this.ctx));
       }
+    }
+  }, {
+    key: 'bulletConditional',
+    value: function bulletConditional() {
+      var _this = this;
+
+      this.bullets.forEach(function (bullet, idx) {
+        if (bullet.y < 0) {
+          _this.bullets.splice(idx, 1);
+        }
+      });
     }
   }, {
     key: 'bindMovements',
     value: function bindMovements() {
-      var _this = this;
+      var _this2 = this;
 
       document.addEventListener('keydown', function (e) {
         switch (e.keyCode) {
           case 65:
-            _this.leftPressed = true;
+            _this2.leftPressed = true;
             break;
           case 87:
-            _this.upPressed = true;
+            _this2.upPressed = true;
             break;
           case 68:
-            _this.rightPressed = true;
+            _this2.rightPressed = true;
             break;
           case 83:
-            _this.downPressed = true;
+            _this2.downPressed = true;
             break;
           case 32:
-            _this.spacePressed = true;
+            _this2.spacePressed = true;
             break;
           default:
             console.log(e);
@@ -383,19 +402,19 @@ var Aircraft = function () {
       document.addEventListener('keyup', function (e) {
         switch (e.keyCode) {
           case 65:
-            _this.leftPressed = false;
+            _this2.leftPressed = false;
             break;
           case 87:
-            _this.upPressed = false;
+            _this2.upPressed = false;
             break;
           case 68:
-            _this.rightPressed = false;
+            _this2.rightPressed = false;
             break;
           case 83:
-            _this.downPressed = false;
+            _this2.downPressed = false;
             break;
           case 32:
-            _this.spacePressed = false;
+            _this2.spacePressed = false;
             break;
           default:
         }
@@ -431,10 +450,6 @@ var Bullet = function () {
     this.ctx = ctx;
     this.draw = this.draw.bind(this);
     this.move = this.move.bind(this);
-    this.spacePressed = false;
-    this.bindMovements = this.bindMovements.bind(this);
-    // this.draw();
-    // this.move();
   }
 
   _createClass(Bullet, [{
@@ -450,21 +465,6 @@ var Bullet = function () {
       if (this.y > 0) {
         this.y -= 3;
       }
-    }
-  }, {
-    key: "bindMovements",
-    value: function bindMovements() {
-      var _this = this;
-
-      document.addEventListener('keydown', function (e) {
-        switch (e.keyCode) {
-          case 32:
-            _this.spacePressed = true;
-            break;
-          default:
-
-        }
-      });
     }
   }]);
 
