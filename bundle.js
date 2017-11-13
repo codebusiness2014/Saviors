@@ -71,13 +71,19 @@
 
 
 var Game = __webpack_require__(1);
+var Background = __webpack_require__(5);
 // import Game from './game';
 
 document.addEventListener('DOMContentLoaded', function () {
   var canvas = document.getElementById('canvas');
+  var canvasBack = document.getElementById('background');
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
     new Game(ctx, canvas).start();
+  }
+  if (canvasBack.getContext) {
+    var _ctx = canvasBack.getContext('2d');
+    new Background(_ctx, canvas).start();
   }
 });
 
@@ -263,6 +269,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Aircraft = __webpack_require__(2);
+// const Background = require('./background');
 // const Bullets = require('./bullets');
 
 var Game = function () {
@@ -291,6 +298,7 @@ var Game = function () {
         bullet.draw();
         bullet.move();
       });
+
       requestAnimationFrame(this.render);
     }
   }]);
@@ -345,11 +353,6 @@ var Aircraft = function () {
   _createClass(Aircraft, [{
     key: 'draw',
     value: function draw() {
-      // if (this.count === 96) {
-      //   this.count = 0;
-      // } else {
-      //   this.count += 3;
-      // }
       this.internalClick += 2;
       // this.ctx.fillStyle = "green";
       // this.ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -361,7 +364,7 @@ var Aircraft = function () {
         }
       }
 
-      this.ctx.drawImage(this.image, this.count, 0, 30, 30, this.x - 7, this.y, 40, 40);
+      this.ctx.drawImage(this.image, this.count, 0, 30, 30, this.x - 11, this.y - 8, 40, 40);
       this.bulletConditional();
 
       if (this.upPressed && this.y > this.width) {
@@ -473,7 +476,7 @@ var Bullet = function () {
   _createClass(Bullet, [{
     key: 'draw',
     value: function draw() {
-      this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x, this.y - 3, this.width, this.height);
+      this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x - 4, this.y - 10, this.width, this.height);
 
       // this.ctx.fillStyle = "blue";
       // this.ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -492,6 +495,66 @@ var Bullet = function () {
 }();
 
 module.exports = Bullet;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Background = function () {
+  function Background(ctx, canvas) {
+    _classCallCheck(this, Background);
+
+    this.ctx = ctx;
+    this.canvas = canvas;
+    this.start = this.start.bind(this);
+    this.render = this.render.bind(this);
+
+    this.image = new Image();
+    this.image.src = 'images/test.png';
+
+    this.speed = 5;
+    this.y = 0;
+    this.draw = this.draw.bind(this);
+    this.draw();
+  }
+
+  _createClass(Background, [{
+    key: 'draw',
+    value: function draw() {
+      this.y += this.speed;
+      this.ctx.drawImage(this.image, 0, this.y);
+      this.ctx.drawImage(this.image, 0, this.y - this.canvas.height);
+
+      if (this.y > this.canvas.height) {
+        this.image.src = 'images/stars_bottom.png';
+        this.y = 0;
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+      this.draw();
+      requestAnimationFrame(this.render);
+    }
+  }, {
+    key: 'start',
+    value: function start() {
+      this.render();
+    }
+  }]);
+
+  return Background;
+}();
+
+module.exports = Background;
 
 /***/ })
 /******/ ]);
