@@ -1,7 +1,8 @@
 module.exports = {
   entry: "./lib/saviors.js",
   output: {
-    filename: "bundle.js"
+    filename: "bundle.js",
+    path: '/',
   },
   devtool: 'source-map',
 };
