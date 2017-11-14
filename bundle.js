@@ -71,7 +71,7 @@
 
 
 var Game = __webpack_require__(1);
-var Background = __webpack_require__(5);
+var Background = __webpack_require__(4);
 // import Game from './game';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -319,7 +319,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Bullets = __webpack_require__(4);
+var Bullets = __webpack_require__(3);
 
 var Aircraft = function () {
   function Aircraft(x, y, width, height, ctx) {
@@ -353,7 +353,7 @@ var Aircraft = function () {
   _createClass(Aircraft, [{
     key: 'draw',
     value: function draw() {
-      this.internalClick += 2;
+      this.internalClick += 20;
       // this.ctx.fillStyle = "green";
       // this.ctx.fillRect(this.x, this.y, this.width, this.height);
       if (this.internalClick % 20 === 0) {
@@ -447,8 +447,7 @@ var Aircraft = function () {
 module.exports = Aircraft;
 
 /***/ }),
-/* 3 */,
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -497,7 +496,7 @@ var Bullet = function () {
 module.exports = Bullet;
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -519,7 +518,7 @@ var Background = function () {
     this.image = new Image();
     this.image.src = 'images/test.png';
 
-    this.speed = 5;
+    this.speed = 3;
     this.y = 0;
     this.draw = this.draw.bind(this);
     this.draw();
