@@ -353,7 +353,7 @@ var Aircraft = function () {
   _createClass(Aircraft, [{
     key: 'draw',
     value: function draw() {
-      this.internalClick += 20;
+      this.internalClick += 2;
       // this.ctx.fillStyle = "green";
       // this.ctx.fillRect(this.x, this.y, this.width, this.height);
       if (this.internalClick % 20 === 0) {
