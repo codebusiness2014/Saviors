@@ -71,7 +71,7 @@
 
 
 var Game = __webpack_require__(1);
-var Background = __webpack_require__(4);
+var Background = __webpack_require__(5);
 // import Game from './game';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -269,7 +269,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Aircraft = __webpack_require__(2);
-var Enemies = __webpack_require__(5);
+var Enemies = __webpack_require__(4);
 // const Background = require('./background');
 // const Bullets = require('./bullets');
 
@@ -284,7 +284,9 @@ var Game = function () {
     this.aircraft = new Aircraft(this.canvas.width / 2, this.canvas.height - 30, 20, 20, this.ctx);
     this.internalClick = 0;
     this.enemy = new Enemies(100, 0, 20, 20, this.ctx);
-    this.enemies = [];
+    this.enemies = [this.enemy];
+
+    this.RectsColliding = this.RectsColliding.bind(this);
   }
 
   _createClass(Game, [{
@@ -293,19 +295,49 @@ var Game = function () {
       this.render();
     }
   }, {
+    key: "RectsColliding",
+    value: function RectsColliding(r1, r2) {
+      if (r1.x > r2.x + r2.w || r1.x + r1.w < r2.x || r1.y > r2.y + r2.h || r1.y + r1.h < r2.y) {
+        alert("collided");
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
+      var _this = this;
+
+      this.internalClick += 1;
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.aircraft.draw();
-      this.enemy.draw();
-      this.enemy.move();
-      this.enemy.bullets.forEach(function (bullet) {
-        bullet.draw();
-        bullet.enemyMove();
+
+      if (this.internalClick % 500 === 0 && this.enemies.length < 2) {
+        this.enemies.push(new Enemies(100, 0, 20, 20, this.ctx));
+      }
+
+      this.enemies.forEach(function (enemy) {
+        enemy.draw();
+        enemy.move();
+        enemy.bullets.forEach(function (bullet) {
+          bullet.draw();
+          bullet.enemyMove();
+        });
       });
+      // if (this.enemy.health !== 0) {
+      //   this.enemy.draw();
+      //   this.enemy.move();
+      // }
+
+      // this.enemy.bullets.forEach( bullet => {
+      //   bullet.draw();
+      //   bullet.enemyMove();
+      //   bullet.collidedWith(this.aircraft);
+      //   this.aircraft.collidedWith(bullet);
+      // });
+
       this.aircraft.bullets.forEach(function (bullet) {
         bullet.draw();
         bullet.move();
+        _this.enemy.collidedWith(bullet);
       });
 
       requestAnimationFrame(this.render);
@@ -357,14 +389,15 @@ var Aircraft = function () {
     this.internalClick = 0;
 
     this.bulletConditional = this.bulletConditional.bind(this);
+
+    this.collidedWith = this.collidedWith.bind(this);
+    this.health = 100;
   }
 
   _createClass(Aircraft, [{
     key: 'draw',
     value: function draw() {
       this.internalClick += 2;
-      // this.ctx.fillStyle = "green";
-      // this.ctx.fillRect(this.x, this.y, this.width, this.height);
       if (this.internalClick % 20 === 0) {
         if (this.count === 96) {
           this.count = 0;
@@ -387,40 +420,52 @@ var Aircraft = function () {
       } else if (this.spacePressed) {
         this.bullets.push(new Bullets(this.x, this.y, 5, 5, this.ctx));
         this.bullets.push(new Bullets(this.x + 25, this.y, 5, 5, this.ctx));
+        // this.bullets = this.bullets.slice(0, 2);
+        // console.log(this.bullets);
       }
     }
   }, {
     key: 'bulletConditional',
     value: function bulletConditional() {
-      var _this = this;
-
+      console.log(this.bullets);
+      var newArr = [];
       this.bullets.forEach(function (bullet, idx) {
-        if (bullet.y < 0) {
-          _this.bullets.splice(idx, 1);
+        if (bullet.y > 0) {
+          newArr.push(bullet);
         }
       });
+
+      this.bullets = newArr;
+    }
+  }, {
+    key: 'collidedWith',
+    value: function collidedWith(object) {
+      if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
+        console.log(this.health);
+        this.health -= 2;
+      }
     }
   }, {
     key: 'bindMovements',
     value: function bindMovements() {
-      var _this2 = this;
+      var _this = this;
 
       document.addEventListener('keydown', function (e) {
         switch (e.keyCode) {
           case 65:
-            _this2.leftPressed = true;
+            _this.leftPressed = true;
             break;
           case 87:
-            _this2.upPressed = true;
+            _this.upPressed = true;
             break;
           case 68:
-            _this2.rightPressed = true;
+            _this.rightPressed = true;
             break;
           case 83:
-            _this2.downPressed = true;
+            _this.downPressed = true;
             break;
           case 32:
-            _this2.spacePressed = true;
+            _this.spacePressed = true;
             break;
           default:
             console.log(e);
@@ -430,19 +475,19 @@ var Aircraft = function () {
       document.addEventListener('keyup', function (e) {
         switch (e.keyCode) {
           case 65:
-            _this2.leftPressed = false;
+            _this.leftPressed = false;
             break;
           case 87:
-            _this2.upPressed = false;
+            _this.upPressed = false;
             break;
           case 68:
-            _this2.rightPressed = false;
+            _this.rightPressed = false;
             break;
           case 83:
-            _this2.downPressed = false;
+            _this.downPressed = false;
             break;
           case 32:
-            _this2.spacePressed = false;
+            _this.spacePressed = false;
             break;
           default:
         }
@@ -479,24 +524,33 @@ var Bullet = function () {
     this.move = this.move.bind(this);
     this.image = new Image();
     this.image.src = 'images/space_bullets.png';
+
+    this.collidedWith = this.collidedWith.bind(this);
   }
 
   _createClass(Bullet, [{
-    key: 'draw',
+    key: "draw",
     value: function draw() {
       this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x - 4, this.y - 10, this.width, this.height);
       this.move();
       this.enemyMove();
     }
   }, {
-    key: 'move',
+    key: "collidedWith",
+    value: function collidedWith(object) {
+      if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
+        console.log("hit!!!");
+      }
+    }
+  }, {
+    key: "move",
     value: function move() {
       if (this.y > 0) {
         this.y -= 3;
       }
     }
   }, {
-    key: 'enemyMove',
+    key: "enemyMove",
     value: function enemyMove() {
       if (this.y < this.ctx.canvas.height + 10) {
         this.y += 3;
@@ -511,6 +565,187 @@ module.exports = Bullet;
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Bullets = __webpack_require__(3);
+
+var Enemy = function () {
+  function Enemy(x, y, width, height, ctx) {
+    _classCallCheck(this, Enemy);
+
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.ctx = ctx;
+    this.draw = this.draw.bind(this);
+
+    this.image = new Image();
+    this.image.src = 'images/aliens.png';
+
+    this.count = 0;
+
+    this.internalClick = 0;
+    this.x = Math.floor(Math.random() * this.ctx.canvas.width + 1);
+
+    this.bullets = [];
+    this.bulletConditional = this.bulletConditional.bind(this);
+    this.movement = this.movement.bind(this);
+    this.turnAllFalse = this.turnAllFalse.bind(this);
+    this.moveUp = this.moveUp.bind(this);
+    this.moveDown = this.moveDown.bind(this);
+    this.moveLeft = this.moveLeft.bind(this);
+    this.moveRight = this.moveRight.bind(this);
+
+    this.up = false;
+    this.down = false;
+    this.left = false;
+    this.right = false;
+
+    this.health = 100;
+  }
+
+  _createClass(Enemy, [{
+    key: 'draw',
+    value: function draw() {
+      this.bulletConditional();
+      this.internalClick += 2;
+
+      this.internalClick += 2;
+      if (this.internalClick % 32 === 0) {
+        if (this.count === 256) {
+          this.count = 0;
+        } else {
+          this.count += 32;
+        }
+      }
+      if (this.internalClick % 800 === 0) {
+        this.bullets.push(new Bullets(this.x + 30, this.y - 35, 15, 15, this.ctx));
+      }
+
+      if (this.internalClick % 200 === 0) {
+        this.movement();
+      }
+
+      this.ctx.drawImage(this.image, 0, 0, 50, 50, this.x, this.y - 100, 60, 60);
+    }
+  }, {
+    key: 'move',
+    value: function move() {
+      if (this.y < this.ctx.canvas.height / 2) {
+        this.y += 2;
+      }
+
+      if (this.y > 10) {
+        if (this.left) {
+          this.moveLeft();
+        } else if (this.right) {
+          this.moveRight();
+        } else if (this.up) {
+          this.moveUp();
+        } else if (this.down) {
+          this.moveDown();
+        }
+      }
+    }
+  }, {
+    key: 'movement',
+    value: function movement() {
+      this.turnAllFalse();
+
+      var moveArr = ["left", "up", "down", "right"];
+      var choice = moveArr[Math.floor(Math.random() * moveArr.length)];
+      switch (choice) {
+        case "left":
+          this.left = true;
+          break;
+        case "up":
+          this.up = true;
+          break;
+        case "down":
+          this.down = true;
+          break;
+        case "right":
+          this.right = true;
+          break;
+        default:
+      }
+    }
+  }, {
+    key: 'collidedWith',
+    value: function collidedWith(object) {
+      if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
+        this.health -= 2;
+      }
+    }
+  }, {
+    key: 'turnAllFalse',
+    value: function turnAllFalse() {
+      this.left = false;
+      this.right = false;
+      this.up = false;
+      this.down = false;
+    }
+  }, {
+    key: 'moveLeft',
+    value: function moveLeft() {
+      if (this.x > 0) {
+        this.x -= 2;
+      }
+    }
+  }, {
+    key: 'moveUp',
+    value: function moveUp() {
+      if (this.y > 0) {
+        this.y -= 2;
+      }
+    }
+  }, {
+    key: 'moveDown',
+    value: function moveDown() {
+      if (this.y < this.ctx.canvas.height / 1.4) {
+        this.y += 2;
+      }
+    }
+  }, {
+    key: 'moveRight',
+    value: function moveRight() {
+      if (this.x < this.ctx.canvas.width - 50) {
+        this.x += 2;
+      }
+    }
+  }, {
+    key: 'bulletConditional',
+    value: function bulletConditional() {
+      var _this = this;
+
+      // console.log(this.bullets);
+      var newArr = [];
+      this.bullets.forEach(function (bullet) {
+        if (bullet.y < _this.ctx.canvas.height) {
+          // this.bullets.splice(idx, 1);
+          newArr.push(bullet);
+        }
+      });
+
+      this.bullets = newArr;
+    }
+  }]);
+
+  return Enemy;
+}();
+
+module.exports = Enemy;
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -568,176 +803,6 @@ var Background = function () {
 }();
 
 module.exports = Background;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Bullets = __webpack_require__(3);
-
-var Enemy = function () {
-  function Enemy(x, y, width, height, ctx) {
-    _classCallCheck(this, Enemy);
-
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.ctx = ctx;
-    this.draw = this.draw.bind(this);
-
-    this.image = new Image();
-    this.image.src = 'images/aliens.png';
-
-    this.count = 0;
-
-    this.internalClick = 0;
-    this.x = Math.floor(Math.random() * this.ctx.canvas.width + 1);
-
-    this.bullets = [];
-    this.bulletConditional = this.bulletConditional.bind(this);
-    this.movement = this.movement.bind(this);
-    this.turnAllFalse = this.turnAllFalse.bind(this);
-    this.moveUp = this.moveUp.bind(this);
-    this.moveDown = this.moveDown.bind(this);
-    this.moveLeft = this.moveLeft.bind(this);
-    this.moveRight = this.moveRight.bind(this);
-
-    this.up = false;
-    this.down = false;
-    this.left = false;
-    this.right = false;
-  }
-
-  _createClass(Enemy, [{
-    key: 'draw',
-    value: function draw() {
-      this.bulletConditional();
-      this.internalClick += 2;
-      // this.ctx.fillStyle = "green";
-      // this.ctx.fillRect(this.x + 11, this.y, this.width, this.height);
-
-      this.internalClick += 2;
-      if (this.internalClick % 32 === 0) {
-        if (this.count === 256) {
-          this.count = 0;
-        } else {
-          this.count += 32;
-        }
-      }
-      if (this.internalClick % 800 === 0) {
-        this.bullets.push(new Bullets(this.x + 30, this.y - 35, 15, 15, this.ctx));
-      }
-
-      if (this.internalClick % 200 === 0) {
-        this.movement();
-      }
-
-      this.ctx.drawImage(this.image, 0, 0, 50, 50, this.x, this.y - 100, 60, 60);
-    }
-  }, {
-    key: 'move',
-    value: function move() {
-      if (this.y < this.ctx.canvas.height / 2) {
-        this.y += 2;
-      }
-
-      if (this.y > 10) {
-        if (this.left) {
-          this.moveLeft();
-        } else if (this.right) {
-          this.moveRight();
-        } else if (this.up) {
-          this.moveUp();
-        } else if (this.down) {
-          this.moveDown();
-        }
-      }
-    }
-  }, {
-    key: 'movement',
-    value: function movement() {
-      this.turnAllFalse();
-
-      var moveArr = ["left", "up", "down", "right"];
-      var choice = moveArr[Math.floor(Math.random() * moveArr.length)];
-      console.log(choice);
-      switch (choice) {
-        case "left":
-          this.left = true;
-          break;
-        case "up":
-          this.up = true;
-          break;
-        case "down":
-          this.down = true;
-          break;
-        case "right":
-          this.right = true;
-          break;
-        default:
-      }
-    }
-  }, {
-    key: 'turnAllFalse',
-    value: function turnAllFalse() {
-      this.left = false;
-      this.right = false;
-      this.up = false;
-      this.down = false;
-    }
-  }, {
-    key: 'moveLeft',
-    value: function moveLeft() {
-      if (this.x > 0) {
-        this.x -= 2;
-      }
-    }
-  }, {
-    key: 'moveUp',
-    value: function moveUp() {
-      if (this.y > 0) {
-        this.y -= 2;
-      }
-    }
-  }, {
-    key: 'moveDown',
-    value: function moveDown() {
-      if (this.y < this.ctx.canvas.height / 2) {
-        this.y += 2;
-      }
-    }
-  }, {
-    key: 'moveRight',
-    value: function moveRight() {
-      if (this.x < this.ctx.canvas.width - 50) {
-        this.x += 2;
-      }
-    }
-  }, {
-    key: 'bulletConditional',
-    value: function bulletConditional() {
-      var _this = this;
-
-      this.bullets.forEach(function (bullet, idx) {
-        if (bullet.y < 0 || bullet.x < 0) {
-          _this.bullets.splice(idx, 1);
-        }
-      });
-    }
-  }]);
-
-  return Enemy;
-}();
-
-module.exports = Enemy;
 
 /***/ })
 /******/ ]);
