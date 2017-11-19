@@ -78,10 +78,12 @@ document.addEventListener('DOMContentLoaded', function () {
   var canvas = document.getElementById('canvas');
   var canvasBack = document.getElementById('background');
   var canvasEnemy = document.getElementById('enemy');
+  var canvasScore = document.getElementById('scoreBoard');
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
     var ctxEnemy = canvasEnemy.getContext('2d');
-    new Game(ctx, canvas, ctxEnemy, canvasEnemy).start();
+    var ctxScore = canvasScore.getContext('2d');
+    new Game(ctx, canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore).start();
   }
   if (canvasBack.getContext) {
     var _ctx = canvasBack.getContext('2d');
@@ -274,13 +276,15 @@ var Aircraft = __webpack_require__(2);
 var Enemies = __webpack_require__(4);
 
 var Game = function () {
-  function Game(ctx, canvas, ctxEnemy, canvasEnemy) {
+  function Game(ctx, canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore) {
     _classCallCheck(this, Game);
 
     this.ctx = ctx;
     this.ctxEnemy = ctxEnemy;
+    this.ctxScore = ctxScore;
     this.canvas = canvas;
     this.canvasEnemy = canvasEnemy;
+    this.canvasScore = canvasScore;
     this.start = this.start.bind(this);
     this.render = this.render.bind(this);
     this.aircraft = new Aircraft(this.canvas.width / 2, this.canvas.height - 30, 20, 20, this.ctx);
@@ -291,6 +295,8 @@ var Game = function () {
 
     this.enemiesRender = this.enemiesRender.bind(this);
     this.score = 0;
+
+    this.renderScore = this.renderScore.bind(this);
   }
 
   _createClass(Game, [{
@@ -299,14 +305,21 @@ var Game = function () {
       this.render();
     }
   }, {
+    key: "renderScore",
+    value: function renderScore() {
+      this.ctxScore.font = "30px Arial";
+      this.ctxScore.fillStyle = 'red';
+      this.ctxScore.fillText("Score: " + this.score, 10, 50);
+    }
+  }, {
     key: "enemiesRender",
     value: function enemiesRender() {
       var _this = this;
 
-      console.log(this.enemies);
+      console.log(this.score);
       var newArr = [];
       this.enemies.forEach(function (enemy) {
-        if (enemy.healthj < 0) {
+        if (enemy.health === 0) {
           _this.score += 20;
         }
         if (enemy.health > 0) {
@@ -327,9 +340,15 @@ var Game = function () {
     value: function render() {
       var _this2 = this;
 
-      this.internalClick += 1;
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctxEnemy.clearRect(0, 0, this.canvasEnemy.width, this.canvasEnemy.height);
+      this.ctxScore.clearRect(0, 0, this.canvasScore.width, this.canvasScore.height);
+
+      this.ctxScore.font = "60px Arial";
+      this.ctxScore.fillStyle = 'red';
+      this.ctxScore.fillText(this.score, 10, 50);
+
+      this.internalClick += 1;
       this.aircraft.draw();
 
       if (this.internalClick % 500 === 0 && this.enemies.length < 2) {
@@ -420,13 +439,14 @@ var Aircraft = function () {
       this.bulletConditional();
 
       if (this.upPressed && this.y > this.width) {
-        this.y -= 15;
+        this.y -= 6;
       } else if (this.downPressed && this.y < this.ctx.canvas.height - this.width - 10) {
-        this.y += 15;
-      } else if (this.leftPressed && this.x > this.width) {
-        this.x -= 15;
+        this.y += 6;
+      }
+      if (this.leftPressed && this.x > this.width) {
+        this.x -= 6;
       } else if (this.rightPressed && this.x < this.ctx.canvas.width - this.width - 15) {
-        this.x += 15;
+        this.x += 6;
       } else if (this.spacePressed && this.bulletClock > 30) {
         this.bulletClock = 0;
         this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx));
@@ -461,12 +481,14 @@ var Aircraft = function () {
         switch (e.keyCode) {
           case 65:
             _this.leftPressed = true;
+            _this.rightPressed = false;
             break;
           case 87:
             _this.upPressed = true;
             break;
           case 68:
             _this.rightPressed = true;
+            _this.leftPressed = false;
             break;
           case 83:
             _this.downPressed = true;
@@ -546,7 +568,7 @@ var Bullet = function () {
   }, {
     key: 'collidedWith',
     value: function collidedWith(object) {
-      if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
+      if (this.x < object.x + 30 + object.width && this.x + this.width > object.x + 30 && this.y < object.y + object.height && this.height + this.y > object.y) {
         this.collided = true;
       }
     }
@@ -554,14 +576,14 @@ var Bullet = function () {
     key: 'move',
     value: function move() {
       if (this.y > 0) {
-        this.y -= 3;
+        this.y -= 6;
       }
     }
   }, {
     key: 'enemyMove',
     value: function enemyMove() {
       if (this.y < this.ctx.canvas.height + 10) {
-        this.y += 3;
+        this.y += 6;
       }
     }
   }]);
@@ -618,22 +640,15 @@ var Enemy = function () {
     this.right = false;
 
     this.health = 100;
+    this.shield = false;
   }
 
   _createClass(Enemy, [{
     key: 'draw',
     value: function draw() {
-      console.log(this.health);
       this.bulletConditional();
       this.internalClick += 2;
-      // console.log(this.internalClick);
-      // if (this.internalClick % 40 === 0) {
-      //   if (this.count === 96) {
-      //     this.count = 0;
-      //   } else {
-      //     this.count += 32;
-      //   }
-      // }
+
       if (this.internalClick % 500 === 0) {
         this.internalClick = 0;
         this.bullets.push(new Bullets(this.x + 30, this.y - 35, 15, 15, this.ctx));
@@ -642,9 +657,9 @@ var Enemy = function () {
       if (this.internalClick % 200 === 0) {
         this.movement();
       }
-      // this.ctx.rect(this.x, this.y - 100, 60, 60);
-      // this.ctx.fillRect(this.x, this.y - 100, 60, 60);
-      this.ctx.drawImage(this.image, 0, 0, 50, 50, this.x, this.y - 100, 60, 60);
+      this.ctx.fillStyle = "blue";
+      this.ctx.fillRect(this.x, this.y - 100, 60, 60);
+      this.ctx.drawImage(this.image, 0, -2, 50, 50, this.x, this.y - 100, 60, 60);
     }
   }, {
     key: 'move',
@@ -692,7 +707,8 @@ var Enemy = function () {
     key: 'collidedWith',
     value: function collidedWith(object) {
       if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
-        this.health -= 10;
+        this.health -= 2;
+        this.shield = true;
       }
     }
   }, {
