@@ -77,9 +77,11 @@ var Background = __webpack_require__(5);
 document.addEventListener('DOMContentLoaded', function () {
   var canvas = document.getElementById('canvas');
   var canvasBack = document.getElementById('background');
+  var canvasEnemy = document.getElementById('enemy');
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
-    new Game(ctx, canvas).start();
+    var ctxEnemy = canvasEnemy.getContext('2d');
+    new Game(ctx, canvas, ctxEnemy, canvasEnemy).start();
   }
   if (canvasBack.getContext) {
     var _ctx = canvasBack.getContext('2d');
@@ -270,23 +272,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Aircraft = __webpack_require__(2);
 var Enemies = __webpack_require__(4);
-// const Background = require('./background');
-// const Bullets = require('./bullets');
 
 var Game = function () {
-  function Game(ctx, canvas) {
+  function Game(ctx, canvas, ctxEnemy, canvasEnemy) {
     _classCallCheck(this, Game);
 
     this.ctx = ctx;
+    this.ctxEnemy = ctxEnemy;
     this.canvas = canvas;
+    this.canvasEnemy = canvasEnemy;
     this.start = this.start.bind(this);
     this.render = this.render.bind(this);
     this.aircraft = new Aircraft(this.canvas.width / 2, this.canvas.height - 30, 20, 20, this.ctx);
     this.internalClick = 0;
-    this.enemy = new Enemies(100, 0, 20, 20, this.ctx);
-    this.enemies = [this.enemy];
+    this.enemy = new Enemies(100, 0, 20, 20, this.ctxEnemy);
+    this.enemyTwo = new Enemies(100, 0, 20, 20, this.ctxEnemy);
+    this.enemies = [this.enemy, this.enemyTwo];
 
-    this.RectsColliding = this.RectsColliding.bind(this);
+    this.enemiesRender = this.enemiesRender.bind(this);
+    this.score = 0;
   }
 
   _createClass(Game, [{
@@ -295,26 +299,19 @@ var Game = function () {
       this.render();
     }
   }, {
-    key: "RectsColliding",
-    value: function RectsColliding(r1, r2) {
-      if (r1.x > r2.x + r2.w || r1.x + r1.w < r2.x || r1.y > r2.y + r2.h || r1.y + r1.h < r2.y) {
-        alert("collided");
-      }
-    }
-  }, {
-    key: "render",
-    value: function render() {
+    key: "enemiesRender",
+    value: function enemiesRender() {
       var _this = this;
 
-      this.internalClick += 1;
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.aircraft.draw();
-
-      if (this.internalClick % 500 === 0 && this.enemies.length < 2) {
-        this.enemies.push(new Enemies(100, 0, 20, 20, this.ctx));
-      }
-
+      console.log(this.enemies);
+      var newArr = [];
       this.enemies.forEach(function (enemy) {
+        if (enemy.healthj < 0) {
+          _this.score += 20;
+        }
+        if (enemy.health > 0) {
+          newArr.push(enemy);
+        }
         enemy.draw();
         enemy.move();
         enemy.bullets.forEach(function (bullet) {
@@ -322,22 +319,32 @@ var Game = function () {
           bullet.enemyMove();
         });
       });
-      // if (this.enemy.health !== 0) {
-      //   this.enemy.draw();
-      //   this.enemy.move();
-      // }
 
-      // this.enemy.bullets.forEach( bullet => {
-      //   bullet.draw();
-      //   bullet.enemyMove();
-      //   bullet.collidedWith(this.aircraft);
-      //   this.aircraft.collidedWith(bullet);
-      // });
+      this.enemies = newArr;
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      this.internalClick += 1;
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctxEnemy.clearRect(0, 0, this.canvasEnemy.width, this.canvasEnemy.height);
+      this.aircraft.draw();
+
+      if (this.internalClick % 500 === 0 && this.enemies.length < 2) {
+        this.enemies.push(new Enemies(100, 0, 20, 20, this.ctxEnemy));
+      }
+
+      this.enemiesRender();
 
       this.aircraft.bullets.forEach(function (bullet) {
         bullet.draw();
         bullet.move();
-        _this.enemy.collidedWith(bullet);
+        _this2.enemies.forEach(function (enemy) {
+          enemy.collidedWith(bullet);
+          bullet.collidedWith(enemy);
+        });
       });
 
       requestAnimationFrame(this.render);
@@ -385,6 +392,8 @@ var Aircraft = function () {
     this.image.src = 'images/Lightning.png';
 
     this.bullets = [];
+    this.bulletClock = 0;
+
     this.count = 0;
     this.internalClick = 0;
 
@@ -397,6 +406,7 @@ var Aircraft = function () {
   _createClass(Aircraft, [{
     key: 'draw',
     value: function draw() {
+      this.bulletClock += 2;
       this.internalClick += 2;
       if (this.internalClick % 20 === 0) {
         if (this.count === 96) {
@@ -417,20 +427,18 @@ var Aircraft = function () {
         this.x -= 15;
       } else if (this.rightPressed && this.x < this.ctx.canvas.width - this.width - 15) {
         this.x += 15;
-      } else if (this.spacePressed) {
-        this.bullets.push(new Bullets(this.x, this.y, 5, 5, this.ctx));
-        this.bullets.push(new Bullets(this.x + 25, this.y, 5, 5, this.ctx));
-        // this.bullets = this.bullets.slice(0, 2);
-        // console.log(this.bullets);
+      } else if (this.spacePressed && this.bulletClock > 30) {
+        this.bulletClock = 0;
+        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx));
+        this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx));
       }
     }
   }, {
     key: 'bulletConditional',
     value: function bulletConditional() {
-      console.log(this.bullets);
       var newArr = [];
       this.bullets.forEach(function (bullet, idx) {
-        if (bullet.y > 0) {
+        if (bullet.y > 0 && bullet.collided === false) {
           newArr.push(bullet);
         }
       });
@@ -441,7 +449,6 @@ var Aircraft = function () {
     key: 'collidedWith',
     value: function collidedWith(object) {
       if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
-        console.log(this.health);
         this.health -= 2;
       }
     }
@@ -524,33 +531,34 @@ var Bullet = function () {
     this.move = this.move.bind(this);
     this.image = new Image();
     this.image.src = 'images/space_bullets.png';
+    this.collided = false;
 
     this.collidedWith = this.collidedWith.bind(this);
   }
 
   _createClass(Bullet, [{
-    key: "draw",
+    key: 'draw',
     value: function draw() {
       this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x - 4, this.y - 10, this.width, this.height);
       this.move();
       this.enemyMove();
     }
   }, {
-    key: "collidedWith",
+    key: 'collidedWith',
     value: function collidedWith(object) {
       if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
-        console.log("hit!!!");
+        this.collided = true;
       }
     }
   }, {
-    key: "move",
+    key: 'move',
     value: function move() {
       if (this.y > 0) {
         this.y -= 3;
       }
     }
   }, {
-    key: "enemyMove",
+    key: 'enemyMove',
     value: function enemyMove() {
       if (this.y < this.ctx.canvas.height + 10) {
         this.y += 3;
@@ -615,25 +623,27 @@ var Enemy = function () {
   _createClass(Enemy, [{
     key: 'draw',
     value: function draw() {
+      console.log(this.health);
       this.bulletConditional();
       this.internalClick += 2;
-
-      this.internalClick += 2;
-      if (this.internalClick % 32 === 0) {
-        if (this.count === 256) {
-          this.count = 0;
-        } else {
-          this.count += 32;
-        }
-      }
-      if (this.internalClick % 800 === 0) {
+      // console.log(this.internalClick);
+      // if (this.internalClick % 40 === 0) {
+      //   if (this.count === 96) {
+      //     this.count = 0;
+      //   } else {
+      //     this.count += 32;
+      //   }
+      // }
+      if (this.internalClick % 500 === 0) {
+        this.internalClick = 0;
         this.bullets.push(new Bullets(this.x + 30, this.y - 35, 15, 15, this.ctx));
       }
 
       if (this.internalClick % 200 === 0) {
         this.movement();
       }
-
+      // this.ctx.rect(this.x, this.y - 100, 60, 60);
+      // this.ctx.fillRect(this.x, this.y - 100, 60, 60);
       this.ctx.drawImage(this.image, 0, 0, 50, 50, this.x, this.y - 100, 60, 60);
     }
   }, {
@@ -682,7 +692,7 @@ var Enemy = function () {
     key: 'collidedWith',
     value: function collidedWith(object) {
       if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
-        this.health -= 2;
+        this.health -= 10;
       }
     }
   }, {
