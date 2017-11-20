@@ -6,11 +6,19 @@
     <script type="application/javascript" src="bundle.js"></script>
     <!-- <script src="./lib/saviors.js"></script> -->
     <style media="screen">
+    html {
+      width: 1200px;
+      background-image: url(images/stars_top.png);
+    }
+    div {
+      margin: 0 auto;
+    }
+
     canvas {
       /*border: 5px solid red;*/
       position: absolute;
-      top: 0px;
-      left: 0px;
+      top: 100px;
+      /*left: 0px;*/
       background: transparent;
     }
 
@@ -30,14 +38,65 @@
       z-index: 2;
       color: red;
     }
+
+    .outer-container {
+      width: 80%;
+      text-align: center;
+    }
+
+    .instructions {
+      /*background-color: white;*/
+      height: 400px;
+      width: 400px;
+      margin-top: 100px;
+      margin-left: 0px;
+      color: red;
+      font-size: 20px;
+    }
+
+    .instructions > h1, p {
+      margin-top: 35px;
+      margin-bottom: 35px;
+      text-align: center;
+    }
+
+    .instructions > h3, ul {
+      margin-left: 120px;
+    }
+
+    .instructions > ul > li {
+      padding: 10px;
+      list-style: none;
+    }
     </style>
   </head>
   <body>
-    <canvas id="scoreBoard" width="550" height="700"></canvas>
-    <canvas id="background" width="550" height="700"></canvas>
-    <canvas id="enemy" width="550" height="700"></canvas>
-    <canvas id="canvas" width="550" height="700">
-      This browser doesn't support Canvas.
-    </canvas>
+    <div class="instructions">
+      <h1>Instructions</h1>
+
+      <h3>Controls:</h3>
+      <ul>
+        <li>A: LEFT</li>
+        <li>W: UP</li>
+        <li>D: RIGHT</li>
+        <li>S: DOWN</li>
+        <li>SPACE BAR: SHOOT</li>
+      </ul>
+
+      <p>STOP THE INVASION!</p>
+
+    </div>
+
+    <div class="outer-container">
+      <div class="inner-container">
+        <canvas id="start" width="550" height="700"></canvas>
+        <canvas id="scoreBoard" width="550" height="700"></canvas>
+        <canvas id="background" width="550" height="700"></canvas>
+        <canvas id="enemy" width="550" height="700"></canvas>
+        <canvas id="canvas" width="550" height="700">
+          This browser doesn't support Canvas.
+        </canvas>
+      </div>
+    </div>
   </body>
 </html>

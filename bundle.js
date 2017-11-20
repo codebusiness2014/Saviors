@@ -73,10 +73,20 @@
 var Game = __webpack_require__(1);
 var Background = __webpack_require__(5);
 // import Game from './game';
+// let gameStart = false;
+//
+// document.addEventListener('keypress', e => {
+//   console.log(e);
+//   console.log(gameStart);
+//   if (e.key === 'r') {
+//     gameStart = true;
+//   }
+// });
 
 document.addEventListener('DOMContentLoaded', function () {
+
+  // if (gameStart) {
   var canvas = document.getElementById('canvas');
-  var canvasBack = document.getElementById('background');
   var canvasEnemy = document.getElementById('enemy');
   var canvasScore = document.getElementById('scoreBoard');
   if (canvas.getContext) {
@@ -85,6 +95,18 @@ document.addEventListener('DOMContentLoaded', function () {
     var ctxScore = canvasScore.getContext('2d');
     new Game(ctx, canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore).start();
   }
+  // } else {
+  //   const canvasStart = document.getElementById('start');
+  //   if (canvasStart.getContext) {
+  //     const ctxStart = canvasStart.getContext('2d');
+  //
+  //     ctxStart.font = "30px Arial";
+  //     ctxStart.fillStyle = 'red';
+  //     ctxStart.fillText("Click Space to Start!", canvasStart.width / 2 - 130,canvasStart.height / 2);
+  //   }
+  //
+  // }
+  var canvasBack = document.getElementById('background');
   if (canvasBack.getContext) {
     var _ctx = canvasBack.getContext('2d');
     new Background(_ctx, canvas).start();
@@ -346,7 +368,7 @@ var Game = function () {
 
       this.ctxScore.font = "60px Arial";
       this.ctxScore.fillStyle = 'red';
-      this.ctxScore.fillText(this.score, 10, 50);
+      this.ctxScore.fillText(this.score, this.canvasScore.width / 2, 50);
 
       this.internalClick += 1;
       this.aircraft.draw();
@@ -657,8 +679,8 @@ var Enemy = function () {
       if (this.internalClick % 200 === 0) {
         this.movement();
       }
-      this.ctx.fillStyle = "blue";
-      this.ctx.fillRect(this.x, this.y - 100, 60, 60);
+      // this.ctx.fillStyle ="blue";
+      // this.ctx.fillRect(this.x, this.y - 100, 60, 60);
       this.ctx.drawImage(this.image, 0, -2, 50, 50, this.x, this.y - 100, 60, 60);
     }
   }, {
