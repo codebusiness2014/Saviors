@@ -679,8 +679,6 @@ var Enemy = function () {
       if (this.internalClick % 200 === 0) {
         this.movement();
       }
-      // this.ctx.fillStyle ="blue";
-      // this.ctx.fillRect(this.x, this.y - 100, 60, 60);
       this.ctx.drawImage(this.image, 0, -2, 50, 50, this.x, this.y - 100, 60, 60);
     }
   }, {
