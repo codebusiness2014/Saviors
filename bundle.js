@@ -71,7 +71,7 @@
 
 
 var Game = __webpack_require__(1);
-var Background = __webpack_require__(4);
+var Background = __webpack_require__(5);
 // import Game from './game';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -124,7 +124,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Aircraft = __webpack_require__(2);
-var Enemies = __webpack_require__(5);
+var Enemies = __webpack_require__(4);
 
 var Game = function () {
   function Game(ctx, canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore) {
@@ -202,7 +202,7 @@ var Game = function () {
       this.internalClick += 1;
       this.aircraft.draw();
 
-      if (this.internalClick % 500 === 0 && this.enemies.length < 2) {
+      if (this.internalClick % 500 === 0 && this.enemies.length < 5) {
         this.enemies.push(new Enemies(100, 0, 20, 20, this.ctxEnemy));
       }
 
@@ -455,66 +455,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Background = function () {
-  function Background(ctx, canvas) {
-    _classCallCheck(this, Background);
-
-    this.ctx = ctx;
-    this.canvas = canvas;
-    this.start = this.start.bind(this);
-    this.render = this.render.bind(this);
-
-    this.image = new Image();
-    this.image.src = 'images/test.png';
-
-    this.speed = 3;
-    this.y = 0;
-    this.draw = this.draw.bind(this);
-    this.draw();
-  }
-
-  _createClass(Background, [{
-    key: 'draw',
-    value: function draw() {
-      this.y += this.speed;
-      this.ctx.drawImage(this.image, 0, this.y);
-      this.ctx.drawImage(this.image, 0, this.y - this.canvas.height);
-
-      if (this.y > this.canvas.height) {
-        this.image.src = 'images/stars_bottom.png';
-        this.y = 0;
-      }
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-      this.draw();
-      requestAnimationFrame(this.render);
-    }
-  }, {
-    key: 'start',
-    value: function start() {
-      this.render();
-    }
-  }]);
-
-  return Background;
-}();
-
-module.exports = Background;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Bullets = __webpack_require__(3);
 
 var Enemy = function () {
@@ -678,6 +618,66 @@ var Enemy = function () {
 }();
 
 module.exports = Enemy;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Background = function () {
+  function Background(ctx, canvas) {
+    _classCallCheck(this, Background);
+
+    this.ctx = ctx;
+    this.canvas = canvas;
+    this.start = this.start.bind(this);
+    this.render = this.render.bind(this);
+
+    this.image = new Image();
+    this.image.src = 'images/test.png';
+
+    this.speed = 3;
+    this.y = 0;
+    this.draw = this.draw.bind(this);
+    this.draw();
+  }
+
+  _createClass(Background, [{
+    key: 'draw',
+    value: function draw() {
+      this.y += this.speed;
+      this.ctx.drawImage(this.image, 0, this.y);
+      this.ctx.drawImage(this.image, 0, this.y - this.canvas.height);
+
+      if (this.y > this.canvas.height) {
+        this.image.src = 'images/stars_bottom.png';
+        this.y = 0;
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+      this.draw();
+      requestAnimationFrame(this.render);
+    }
+  }, {
+    key: 'start',
+    value: function start() {
+      this.render();
+    }
+  }]);
+
+  return Background;
+}();
+
+module.exports = Background;
 
 /***/ })
 /******/ ]);
