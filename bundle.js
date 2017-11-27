@@ -71,7 +71,7 @@
 
 
 var Game = __webpack_require__(1);
-var Background = __webpack_require__(5);
+var Background = __webpack_require__(4);
 // import Game from './game';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -97,11 +97,13 @@ document.addEventListener('DOMContentLoaded', function () {
       var _canvas = document.getElementById('canvas');
       var canvasEnemy = document.getElementById('enemy');
       var canvasScore = document.getElementById('scoreBoard');
+      var canvasGameOver = document.getElementById('gameOver');
       if (_canvas.getContext) {
         var ctx = _canvas.getContext('2d');
         var ctxEnemy = canvasEnemy.getContext('2d');
         var ctxScore = canvasScore.getContext('2d');
-        new Game(ctx, _canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore).start();
+        var ctxGameOver = canvasGameOver.getContext('2d');
+        new Game(ctx, _canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore, ctxGameOver, canvasGameOver).start();
       }
     }
   });
@@ -124,18 +126,20 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Aircraft = __webpack_require__(2);
-var Enemies = __webpack_require__(4);
+var Enemies = __webpack_require__(5);
 
 var Game = function () {
-  function Game(ctx, canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore) {
+  function Game(ctx, canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore, ctxGameOver, canvasGameOver) {
     _classCallCheck(this, Game);
 
     this.ctx = ctx;
     this.ctxEnemy = ctxEnemy;
     this.ctxScore = ctxScore;
+    this.ctxGameOver = ctxGameOver;
     this.canvas = canvas;
     this.canvasEnemy = canvasEnemy;
     this.canvasScore = canvasScore;
+    this.canvasGameOver = canvasGameOver;
     this.start = this.start.bind(this);
     this.render = this.render.bind(this);
     this.aircraft = new Aircraft(this.canvas.width / 2, this.canvas.height - 30, 20, 20, this.ctx);
@@ -147,7 +151,7 @@ var Game = function () {
     this.enemiesRender = this.enemiesRender.bind(this);
     this.score = 0;
 
-    this.renderScore = this.renderScore.bind(this);
+    // this.renderScore = this.renderScore.bind(this);
   }
 
   _createClass(Game, [{
@@ -155,19 +159,18 @@ var Game = function () {
     value: function start() {
       this.render();
     }
-  }, {
-    key: "renderScore",
-    value: function renderScore() {
-      this.ctxScore.font = "30px Arial";
-      this.ctxScore.fillStyle = 'red';
-      this.ctxScore.fillText("Score: " + this.score, 10, 50);
-    }
+
+    // renderScore() {
+    //   this.ctxScore.font = "30px Arial";
+    //   this.ctxScore.fillStyle = 'red';
+    //   this.ctxScore.fillText(`Score: ${ this.score }`,10,50);
+    // }
+
   }, {
     key: "enemiesRender",
     value: function enemiesRender() {
       var _this = this;
 
-      console.log(this.score);
       var newArr = [];
       this.enemies.forEach(function (enemy) {
         if (enemy.health === 0) {
@@ -178,9 +181,12 @@ var Game = function () {
         }
         enemy.draw();
         enemy.move();
+        _this.aircraft.collidedWith(enemy);
         enemy.bullets.forEach(function (bullet) {
           bullet.draw();
           bullet.enemyMove();
+
+          _this.aircraft.collidedWith(bullet);
         });
       });
 
@@ -194,13 +200,26 @@ var Game = function () {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctxEnemy.clearRect(0, 0, this.canvasEnemy.width, this.canvasEnemy.height);
       this.ctxScore.clearRect(0, 0, this.canvasScore.width, this.canvasScore.height);
+      this.ctxGameOver.clearRect(0, 0, this.canvasGameOver.width, this.canvasGameOver.height);
 
       this.ctxScore.font = "60px Arial";
       this.ctxScore.fillStyle = 'red';
       this.ctxScore.fillText(this.score, this.canvasScore.width / 2, 50);
 
       this.internalClick += 1;
-      this.aircraft.draw();
+
+      if (this.aircraft.health <= 0) {
+
+        this.ctxGameOver.font = "30px Arial";
+        this.ctxGameOver.fillStyle = 'red';
+        this.ctxGameOver.fillText("Game Over", this.canvasGameOver.width / 2 - 50, this.canvasGameOver.height / 2 - 50);
+        this.ctxGameOver.font = "30px Arial";
+        this.ctxGameOver.fillStyle = 'red';
+        this.ctxGameOver.fillText("Play Again?", this.canvasGameOver.width / 2 - 50, this.canvasGameOver.height / 2);
+      }
+      if (this.aircraft.health > 0) {
+        this.aircraft.draw();
+      }
 
       if (this.internalClick % 500 === 0 && this.enemies.length < 5) {
         this.enemies.push(new Enemies(100, 0, 20, 20, this.ctxEnemy));
@@ -455,6 +474,66 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Background = function () {
+  function Background(ctx, canvas) {
+    _classCallCheck(this, Background);
+
+    this.ctx = ctx;
+    this.canvas = canvas;
+    this.start = this.start.bind(this);
+    this.render = this.render.bind(this);
+
+    this.image = new Image();
+    this.image.src = 'images/test.png';
+
+    this.speed = 3;
+    this.y = 0;
+    this.draw = this.draw.bind(this);
+    this.draw();
+  }
+
+  _createClass(Background, [{
+    key: 'draw',
+    value: function draw() {
+      this.y += this.speed;
+      this.ctx.drawImage(this.image, 0, this.y);
+      this.ctx.drawImage(this.image, 0, this.y - this.canvas.height);
+
+      if (this.y > this.canvas.height) {
+        this.image.src = 'images/stars_bottom.png';
+        this.y = 0;
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+      this.draw();
+      requestAnimationFrame(this.render);
+    }
+  }, {
+    key: 'start',
+    value: function start() {
+      this.render();
+    }
+  }]);
+
+  return Background;
+}();
+
+module.exports = Background;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var Bullets = __webpack_require__(3);
 
 var Enemy = function () {
@@ -508,7 +587,10 @@ var Enemy = function () {
       if (this.internalClick % 200 === 0) {
         this.movement();
       }
-      this.ctx.drawImage(this.image, 0, -2, 50, 50, this.x, this.y - 100, 60, 60);
+      if (this.health === 0) {
+        this.ctx.drawImage(this.image, 0, 354, 50, 50, this.x, this.y, 60, 60);
+      }
+      this.ctx.drawImage(this.image, 0, 0, 50, 50, this.x, this.y, 60, 60);
     }
   }, {
     key: 'move',
@@ -618,66 +700,6 @@ var Enemy = function () {
 }();
 
 module.exports = Enemy;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Background = function () {
-  function Background(ctx, canvas) {
-    _classCallCheck(this, Background);
-
-    this.ctx = ctx;
-    this.canvas = canvas;
-    this.start = this.start.bind(this);
-    this.render = this.render.bind(this);
-
-    this.image = new Image();
-    this.image.src = 'images/test.png';
-
-    this.speed = 3;
-    this.y = 0;
-    this.draw = this.draw.bind(this);
-    this.draw();
-  }
-
-  _createClass(Background, [{
-    key: 'draw',
-    value: function draw() {
-      this.y += this.speed;
-      this.ctx.drawImage(this.image, 0, this.y);
-      this.ctx.drawImage(this.image, 0, this.y - this.canvas.height);
-
-      if (this.y > this.canvas.height) {
-        this.image.src = 'images/stars_bottom.png';
-        this.y = 0;
-      }
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-      this.draw();
-      requestAnimationFrame(this.render);
-    }
-  }, {
-    key: 'start',
-    value: function start() {
-      this.render();
-    }
-  }]);
-
-  return Background;
-}();
-
-module.exports = Background;
 
 /***/ })
 /******/ ]);
