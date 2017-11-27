@@ -219,6 +219,10 @@ var Game = function () {
       }
       if (this.aircraft.health > 0) {
         this.aircraft.draw();
+        this.ctxScore.fillStyle = "#FF0000";
+        this.ctxScore.fillRect(20, 20, this.aircraft.health / 100 * 100, 25);
+        this.ctxScore.strokeStyle = "red";
+        this.ctxScore.strokeRect(20, 20, 100, 25);
       }
 
       if (this.internalClick % 500 === 0 && this.enemies.length < 5) {
