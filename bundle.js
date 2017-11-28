@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,8 +70,72 @@
 "use strict";
 
 
-var Game = __webpack_require__(1);
-var Background = __webpack_require__(4);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Bullet = function () {
+  function Bullet(x, y, width, height, ctx) {
+    _classCallCheck(this, Bullet);
+
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.ctx = ctx;
+    this.draw = this.draw.bind(this);
+    this.move = this.move.bind(this);
+    this.image = new Image();
+    this.image.src = 'images/space_bullets.png';
+    this.collided = false;
+
+    this.collidedWith = this.collidedWith.bind(this);
+  }
+
+  _createClass(Bullet, [{
+    key: 'draw',
+    value: function draw() {
+      this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x - 4, this.y - 10, this.width, this.height);
+      this.move();
+      this.enemyMove();
+    }
+  }, {
+    key: 'collidedWith',
+    value: function collidedWith(object) {
+      if (this.x < object.x + object.width + 50 && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
+        this.collided = true;
+      }
+    }
+  }, {
+    key: 'move',
+    value: function move() {
+      if (this.y > 0) {
+        this.y -= 6;
+      }
+    }
+  }, {
+    key: 'enemyMove',
+    value: function enemyMove() {
+      if (this.y < this.ctx.canvas.height + 10) {
+        this.y += 6;
+      }
+    }
+  }]);
+
+  return Bullet;
+}();
+
+module.exports = Bullet;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Game = __webpack_require__(2);
+var Background = __webpack_require__(5);
 
 document.addEventListener('DOMContentLoaded', function () {
   var preGame = function preGame() {
@@ -114,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -124,8 +188,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Aircraft = __webpack_require__(2);
-var Enemies = __webpack_require__(5);
+var Aircraft = __webpack_require__(3);
+var Enemies = __webpack_require__(4);
 
 var Game = function () {
   function Game(ctx, canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore, ctxGameOver, canvasGameOver) {
@@ -149,8 +213,7 @@ var Game = function () {
 
     this.enemiesRender = this.enemiesRender.bind(this);
     this.score = 0;
-
-    // this.renderScore = this.renderScore.bind(this);
+    this.enemyCounter = 0;
   }
 
   _createClass(Game, [{
@@ -158,13 +221,6 @@ var Game = function () {
     value: function start() {
       this.render();
     }
-
-    // renderScore() {
-    //   this.ctxScore.font = "30px Arial";
-    //   this.ctxScore.fillStyle = 'red';
-    //   this.ctxScore.fillText(`Score: ${ this.score }`,10,50);
-    // }
-
   }, {
     key: "enemiesRender",
     value: function enemiesRender() {
@@ -172,6 +228,11 @@ var Game = function () {
 
       var newArr = [];
       this.enemies.forEach(function (enemy) {
+        // if (enemy.health === 0 && this.enemyCounter < 1000) {
+        //   this.enemyCounter += 1;
+        //   this.ctxEnemy.drawImage(enemy.image, 0, 354, 50, 50, enemy.x, enemy.y, 60, 60);
+        // }
+
         if (enemy.health === 0) {
           _this.score += 20;
         }
@@ -248,7 +309,7 @@ var Game = function () {
 module.exports = Game;
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -258,7 +319,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Bullets = __webpack_require__(3);
+var Bullets = __webpack_require__(0);
 
 var Aircraft = function () {
   function Aircraft(x, y, width, height, ctx) {
@@ -289,6 +350,7 @@ var Aircraft = function () {
     this.internalClick = 0;
 
     this.bulletConditional = this.bulletConditional.bind(this);
+    this.bulletConditional();
 
     this.collidedWith = this.collidedWith.bind(this);
     this.health = 100;
@@ -426,70 +488,6 @@ var Aircraft = function () {
 module.exports = Aircraft;
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Bullet = function () {
-  function Bullet(x, y, width, height, ctx) {
-    _classCallCheck(this, Bullet);
-
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.ctx = ctx;
-    this.draw = this.draw.bind(this);
-    this.move = this.move.bind(this);
-    this.image = new Image();
-    this.image.src = 'images/space_bullets.png';
-    this.collided = false;
-
-    this.collidedWith = this.collidedWith.bind(this);
-  }
-
-  _createClass(Bullet, [{
-    key: 'draw',
-    value: function draw() {
-      this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x - 4, this.y - 10, this.width, this.height);
-      this.move();
-      this.enemyMove();
-    }
-  }, {
-    key: 'collidedWith',
-    value: function collidedWith(object) {
-      if (this.x < object.x + 30 + object.width && this.x + this.width > object.x + 30 && this.y < object.y + object.height && this.height + this.y > object.y) {
-        this.collided = true;
-      }
-    }
-  }, {
-    key: 'move',
-    value: function move() {
-      if (this.y > 0) {
-        this.y -= 6;
-      }
-    }
-  }, {
-    key: 'enemyMove',
-    value: function enemyMove() {
-      if (this.y < this.ctx.canvas.height + 10) {
-        this.y += 6;
-      }
-    }
-  }]);
-
-  return Bullet;
-}();
-
-module.exports = Bullet;
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -500,67 +498,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Background = function () {
-  function Background(ctx, canvas) {
-    _classCallCheck(this, Background);
-
-    this.ctx = ctx;
-    this.canvas = canvas;
-    this.start = this.start.bind(this);
-    this.render = this.render.bind(this);
-
-    this.image = new Image();
-    this.image.src = 'images/test.png';
-
-    this.speed = 3;
-    this.y = 0;
-    this.draw = this.draw.bind(this);
-    this.draw();
-  }
-
-  _createClass(Background, [{
-    key: 'draw',
-    value: function draw() {
-      this.y += this.speed;
-      this.ctx.drawImage(this.image, 0, this.y);
-      this.ctx.drawImage(this.image, 0, this.y - this.canvas.height);
-
-      if (this.y > this.canvas.height) {
-        this.image.src = 'images/stars_bottom.png';
-        this.y = 0;
-      }
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-      this.draw();
-      requestAnimationFrame(this.render);
-    }
-  }, {
-    key: 'start',
-    value: function start() {
-      this.render();
-    }
-  }]);
-
-  return Background;
-}();
-
-module.exports = Background;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Bullets = __webpack_require__(3);
+var Bullets = __webpack_require__(0);
 
 var Enemy = function () {
   function Enemy(x, y, width, height, ctx) {
@@ -600,6 +538,9 @@ var Enemy = function () {
 
     this.health = 100;
     this.shield = false;
+
+    this.enemyDeath = 0;
+    this.enemyDeathCounter = 0;
   }
 
   _createClass(Enemy, [{
@@ -607,7 +548,7 @@ var Enemy = function () {
     value: function draw() {
       this.bulletConditional();
       this.internalClick += 2;
-      this.animatedRow += 2;
+      this.animatedRow += 4;
 
       if (this.internalClick % 500 === 0) {
         this.internalClick = 0;
@@ -618,9 +559,14 @@ var Enemy = function () {
         this.movement();
       }
       if (this.health === 0) {
+        this.enemyCounter += 1;
         this.ctx.drawImage(this.image, 0, 354, 50, 50, this.x, this.y, 60, 60);
+        // this.enemyDeath += 2;
+        // if (this.enemyDeath % 30 === 0) {
+        //   this.enemyDeathCounter += 32;
+        // }
       }
-
+      console.log(this.column);
       if (this.animatedRow === 384 && this.column === 39) {
         this.animatedRow = 0;
         this.row = 0;
@@ -628,25 +574,11 @@ var Enemy = function () {
       } else if (this.animatedRow === 384) {
         this.animatedRow = 0;
         this.row = 0;
-        this.column += 41;
+        this.column += 43;
       } else if (this.animatedRow % 47 === 0) {
         this.row += 47;
       }
-
-      // else if (this.animatedRow === 384) {
-      //   this.animatedRow = 0;
-      //   this.row = 0;
-      //   this.column += 41;
-      // }
-
-      // if (this.animatedPicture === 384) {
-      //   this.animatedPicture = 0;
-      //   this.row = 0;
-      // } else if (this.animatedPicture % 47 === 0) {
-      //   this.row += 47;
-      // }
-
-      this.ctx.drawImage(this.image, this.row, this.column, 50, 50, this.x, this.y, 60, 60);
+      this.ctx.drawImage(this.image, this.row, 0, 50, 50, this.x, this.y, 60, 60);
     }
   }, {
     key: 'move',
@@ -694,7 +626,7 @@ var Enemy = function () {
     key: 'collidedWith',
     value: function collidedWith(object) {
       if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
-        this.health -= 2;
+        this.health -= 10;
         this.shield = true;
       }
     }
@@ -756,6 +688,66 @@ var Enemy = function () {
 }();
 
 module.exports = Enemy;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Background = function () {
+  function Background(ctx, canvas) {
+    _classCallCheck(this, Background);
+
+    this.ctx = ctx;
+    this.canvas = canvas;
+    this.start = this.start.bind(this);
+    this.render = this.render.bind(this);
+
+    this.image = new Image();
+    this.image.src = 'images/test.png';
+
+    this.speed = 3;
+    this.y = 0;
+    this.draw = this.draw.bind(this);
+    this.draw();
+  }
+
+  _createClass(Background, [{
+    key: 'draw',
+    value: function draw() {
+      this.y += this.speed;
+      this.ctx.drawImage(this.image, 0, this.y);
+      this.ctx.drawImage(this.image, 0, this.y - this.canvas.height);
+
+      if (this.y > this.canvas.height) {
+        this.image.src = 'images/stars_bottom.png';
+        this.y = 0;
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+      this.draw();
+      requestAnimationFrame(this.render);
+    }
+  }, {
+    key: 'start',
+    value: function start() {
+      this.render();
+    }
+  }]);
+
+  return Background;
+}();
+
+module.exports = Background;
 
 /***/ })
 /******/ ]);
