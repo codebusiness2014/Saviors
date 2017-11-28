@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Saviors</title>
     <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script type="application/javascript" src="bundle.js"></script>
     <!-- <script src="./lib/saviors.js"></script> -->
     <style media="screen">
@@ -83,6 +84,50 @@
       padding: 10px;
       list-style: none;
     }
+
+    .creator {
+      position: absolute;
+      height: 400px;
+      width: 300px;
+      float: right;
+      color: red;
+      font-size: 20px;
+      top: 100px;
+      right: 150px;
+    }
+
+    .creator > div {
+      display: flex;
+      justify-content: space-between;
+      font-size: 70px;
+    }
+
+    .creator > div > p {
+    }
+
+    .creator > div > p > a {
+      text-decoration: none;
+      color: red;
+    }
+
+    .creator > div > p > a:hover {
+      cursor: pointer;
+      color: blue;
+    }
+
+    img {
+      height: 70px;
+    }
+
+    .title {
+      width: 1700px;
+      position: absolute;
+      text-align: center;
+      font-size: 50px;
+      color: red;
+      top: 0px;
+    }
+
     </style>
   </head>
   <body>
@@ -103,6 +148,8 @@
 
     </div>
 
+    <h2 class="title"> Saviors </h2>
+
     <div class="outer-container">
       <div class="inner-container">
         <canvas id="start" width="550" height="700"></canvas>
@@ -114,6 +161,17 @@
         </canvas>
         <canvas id="gameOver" width="550" height="700"></canvas>
       </div>
+    </div>
+
+    <div class="creator">
+      <h1>Created by: <br> Steven Ossorio</h1>
+
+      <div>
+        <p><a href="https://github.com/steven-ossorio"><i class="fa fa-github" aria-hidden="true"></i></a></p>
+        <p><a href="https://www.linkedin.com/in/steven-ossorio/"><i class="fa fa-linkedin" aria-hidden="true"></i></a></p>
+        <p><a href="http://www.stevenossorio.com"><img src="images/panda.png" alt=""></a></p>
+      </div>
+
     </div>
   </body>
 </html>

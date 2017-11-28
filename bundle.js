@@ -576,7 +576,8 @@ var Enemy = function () {
     this.image = new Image();
     this.image.src = 'images/aliens.png';
 
-    this.count = 0;
+    this.row = 0;
+    this.column = -2;
 
     this.internalClick = 0;
     this.x = Math.floor(Math.random() * this.ctx.canvas.width + 1);
@@ -589,6 +590,8 @@ var Enemy = function () {
     this.moveDown = this.moveDown.bind(this);
     this.moveLeft = this.moveLeft.bind(this);
     this.moveRight = this.moveRight.bind(this);
+
+    this.animatedRow = 0;
 
     this.up = false;
     this.down = false;
@@ -604,6 +607,7 @@ var Enemy = function () {
     value: function draw() {
       this.bulletConditional();
       this.internalClick += 2;
+      this.animatedRow += 2;
 
       if (this.internalClick % 500 === 0) {
         this.internalClick = 0;
@@ -616,7 +620,33 @@ var Enemy = function () {
       if (this.health === 0) {
         this.ctx.drawImage(this.image, 0, 354, 50, 50, this.x, this.y, 60, 60);
       }
-      this.ctx.drawImage(this.image, 0, 0, 50, 50, this.x, this.y, 60, 60);
+
+      if (this.animatedRow === 384 && this.column === 39) {
+        this.animatedRow = 0;
+        this.row = 0;
+        this.column = 0;
+      } else if (this.animatedRow === 384) {
+        this.animatedRow = 0;
+        this.row = 0;
+        this.column += 41;
+      } else if (this.animatedRow % 47 === 0) {
+        this.row += 47;
+      }
+
+      // else if (this.animatedRow === 384) {
+      //   this.animatedRow = 0;
+      //   this.row = 0;
+      //   this.column += 41;
+      // }
+
+      // if (this.animatedPicture === 384) {
+      //   this.animatedPicture = 0;
+      //   this.row = 0;
+      // } else if (this.animatedPicture % 47 === 0) {
+      //   this.row += 47;
+      // }
+
+      this.ctx.drawImage(this.image, this.row, this.column, 50, 50, this.x, this.y, 60, 60);
     }
   }, {
     key: 'move',
