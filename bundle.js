@@ -722,8 +722,8 @@ var Background = function () {
     key: 'draw',
     value: function draw() {
       this.y += this.speed;
-      this.ctx.drawImage(this.image, 0, this.y);
-      this.ctx.drawImage(this.image, 0, this.y - this.canvas.height);
+      this.ctx.drawImage(this.image, -50, this.y);
+      this.ctx.drawImage(this.image, -50, this.y - this.canvas.height);
 
       if (this.y > this.canvas.height) {
         this.image.src = 'images/nebula.png';
