@@ -264,7 +264,7 @@ var Game = function () {
 
       this.ctxScore.font = "60px Arial";
       this.ctxScore.fillStyle = 'red';
-      this.ctxScore.fillText(this.score, this.canvasScore.width / 2, 50);
+      this.ctxScore.fillText(this.score, this.canvasScore.width / 2 - 10, 50);
 
       this.internalClick += 1;
 
@@ -284,7 +284,7 @@ var Game = function () {
         this.ctxScore.strokeRect(20, 20, 100, 25);
       }
 
-      if (this.internalClick % 500 === 0 && this.enemies.length < 5) {
+      if (this.internalClick % 200 === 0 && this.enemies.length < 10) {
         this.enemies.push(new Enemies(100, 0, 20, 20, this.ctxEnemy));
       }
 
@@ -626,7 +626,7 @@ var Enemy = function () {
     key: 'collidedWith',
     value: function collidedWith(object) {
       if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
-        this.health -= 10;
+        this.health -= 20;
         this.shield = true;
       }
     }
