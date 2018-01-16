@@ -461,7 +461,7 @@ var Aircraft = function () {
             _this.spacePressed = true;
             break;
           default:
-            console.log(e);
+            break;
         }
       });
 
@@ -572,7 +572,7 @@ var Enemy = function () {
         //   this.enemyDeathCounter += 32;
         // }
       }
-      console.log(this.column);
+      // console.log(this.column);
       if (this.animatedRow === 384 && this.column === 39) {
         this.animatedRow = 0;
         this.row = 0;
