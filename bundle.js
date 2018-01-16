@@ -572,7 +572,6 @@ var Enemy = function () {
         //   this.enemyDeathCounter += 32;
         // }
       }
-      // console.log(this.column);
       if (this.animatedRow === 384 && this.column === 39) {
         this.animatedRow = 0;
         this.row = 0;
@@ -677,7 +676,6 @@ var Enemy = function () {
     value: function bulletConditional() {
       var _this = this;
 
-      // console.log(this.bullets);
       var newArr = [];
       this.bullets.forEach(function (bullet) {
         if (bullet.y < _this.ctx.canvas.height) {
