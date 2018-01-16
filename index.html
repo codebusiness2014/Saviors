@@ -5,20 +5,19 @@
     <title>Saviors</title>
     <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script type="application/javascript" src="bundle.js"></script>
-    <!-- <script src="./lib/saviors.js"></script> -->
+    <script src="./bundle.js"></script>
     <style media="screen">
     @font-face {
       font-family: "games";
       src: url('./pdark.ttf');
     }
     html {
-      width: 1200px;
+      /*width: 1200px;*/
       background-image: url(images/stars_top.png);
     }
-    div {
+    /*div {
       margin: 0 auto;
-    }
+    }*/
 
     canvas {
       /*border: 5px solid red;*/
@@ -55,9 +54,18 @@
       color: red;
     }
 
+    .entire-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
     .outer-container {
-      width: 80%;
-      text-align: center;
+      /*width: 80%;
+      text-align: center;*/
+    }
+
+    .inner-container {
+      width: 600px;
     }
 
     .instructions {
@@ -86,14 +94,17 @@
     }
 
     .creator {
-      position: absolute;
+      /*position: absolute;
       height: 400px;
       width: 300px;
-      float: right;
+      float: right;*/
       color: red;
       font-size: 20px;
+      /*font-size: 20px;
       top: 100px;
-      right: 150px;
+      right: 150px;*/
+      margin-right: 100px;
+      margin-top: 100px;
     }
 
     .creator > div {
@@ -120,8 +131,6 @@
     }
 
     .title {
-      width: 1750px;
-      position: absolute;
       text-align: center;
       font-size: 50px;
       color: red;
@@ -131,47 +140,48 @@
     </style>
   </head>
   <body>
-    <div class="instructions">
-      <h1>Instructions</h1>
+    <div class="entire-container">
+      <div class="instructions">
+        <h1>Instructions</h1>
 
-      <h3>Controls:</h3>
-      <ul>
-        <li>A: LEFT</li>
-        <li>W: UP</li>
-        <li>D: RIGHT</li>
-        <li>S: DOWN</li>
-        <li>SPACE BAR: SHOOT</li>
-        <li>R: START/REFRESH GAME</li>
-      </ul>
+        <h3>Controls:</h3>
+        <ul>
+          <li>A: LEFT</li>
+          <li>W: UP</li>
+          <li>D: RIGHT</li>
+          <li>S: DOWN</li>
+          <li>SPACE BAR: SHOOT</li>
+          <li>R: START/REFRESH GAME</li>
+        </ul>
 
-      <p>STOP THE INVASION!</p>
+        <p>STOP THE INVASION!</p>
 
-    </div>
-
-    <h2 class="title"> Saviors </h2>
-
-    <div class="outer-container">
-      <div class="inner-container">
-        <canvas id="start" width="550" height="700"></canvas>
-        <canvas id="scoreBoard" width="550" height="700"></canvas>
-        <canvas id="background" width="550" height="700"></canvas>
-        <canvas id="enemy" width="550" height="700"></canvas>
-        <canvas id="canvas" width="550" height="700">
-          This browser doesn't support Canvas.
-        </canvas>
-        <canvas id="gameOver" width="550" height="700"></canvas>
-      </div>
-    </div>
-
-    <div class="creator">
-      <h1>Created by: <br> Steven Ossorio</h1>
-
-      <div>
-        <p><a href="https://github.com/steven-ossorio"><i class="fa fa-github" aria-hidden="true"></i></a></p>
-        <p><a href="https://www.linkedin.com/in/steven-ossorio/"><i class="fa fa-linkedin" aria-hidden="true"></i></a></p>
-        <p><a href="http://www.stevenossorio.com"><img src="images/panda.png" alt=""></a></p>
       </div>
 
+
+      <div class="outer-container">
+        <div class="inner-container">
+          <h2 class="title"> Saviors </h2>
+          <canvas id="start" width="550" height="700"></canvas>
+          <canvas id="scoreBoard" width="550" height="700"></canvas>
+          <canvas id="background" width="550" height="700"></canvas>
+          <canvas id="enemy" width="550" height="700"></canvas>
+          <canvas id="canvas" width="550" height="700">
+            This browser doesn't support Canvas.
+          </canvas>
+          <canvas id="gameOver" width="550" height="700"></canvas>
+        </div>
+      </div>
+
+      <div class="creator">
+        <h1>Created by: <br> Steven Ossorio</h1>
+
+        <div>
+          <p><a href="https://github.com/steven-ossorio"><i class="fa fa-github" aria-hidden="true"></i></a></p>
+          <p><a href="https://www.linkedin.com/in/steven-ossorio/"><i class="fa fa-linkedin" aria-hidden="true"></i></a></p>
+          <p><a href="http://www.stevenossorio.com"><img src="images/panda.png" alt=""></a></p>
+        </div>
+      </div>
     </div>
   </body>
 </html>
