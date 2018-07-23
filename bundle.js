@@ -214,6 +214,7 @@ var Game = function () {
     this.enemiesRender = this.enemiesRender.bind(this);
     this.score = 0;
     this.enemyCounter = 0;
+    this.restarted = false;
   }
 
   _createClass(Game, [{
@@ -263,7 +264,7 @@ var Game = function () {
       this.ctxGameOver.clearRect(0, 0, this.canvasGameOver.width, this.canvasGameOver.height);
 
       this.ctxScore.font = "60px Arial";
-      this.ctxScore.fillStyle = 'red';
+      this.ctxScore.fillStyle = "red";
       if (this.score < 100) {
         this.ctxScore.fillText(this.score, this.canvasScore.width / 2 - 10, 50);
       } else if (this.score < 1000) {
@@ -276,13 +277,18 @@ var Game = function () {
 
       if (this.aircraft.health <= 0) {
         this.ctxGameOver.font = "30px games";
-        this.ctxGameOver.fillStyle = 'red';
+        this.ctxGameOver.fillStyle = "red";
         this.ctxGameOver.fillText("Game Over", this.canvasGameOver.width / 2 - 100, this.canvasGameOver.height / 2 - 50);
         this.ctxGameOver.font = "30px games";
-        this.ctxGameOver.fillStyle = 'red';
+        this.ctxGameOver.fillStyle = "red";
         this.ctxGameOver.fillText("Play Again?", this.canvasGameOver.width / 2 - 100, this.canvasGameOver.height / 2);
+        if (this.restarted === true) {
+          console.log(this.score);
+          this.restarted = false;
+        }
       }
       if (this.aircraft.health > 0) {
+        this.restarted = true;
         this.aircraft.draw();
         this.ctxScore.fillStyle = "#FF0000";
         this.ctxScore.fillRect(20, 20, this.aircraft.health / 100 * 100, 25);
