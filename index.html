@@ -1,20 +1,37 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Saviors</title>
-    <link rel="icon" href="favicon.ico">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="./bundle.js"></script>
-    <style media="screen">
+
+<head>
+  <meta charset="utf-8">
+  <title>Saviors</title>
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="./bundle.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyAWdiiOMhpo8PIMrlJXU-mtp1P3-_075EY",
+      authDomain: "saviors-745b2.firebaseapp.com",
+      databaseURL: "https://saviors-745b2.firebaseio.com",
+      projectId: "saviors-745b2",
+      storageBucket: "",
+      messagingSenderId: "975534103154"
+    };
+    firebase.initializeApp(config);
+  </script>
+  <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+  <style media="screen">
     @font-face {
       font-family: "games";
       src: url('./pdark.ttf');
     }
+
     html {
       /*width: 1200px;*/
       background-image: url(images/stars_top.png);
     }
+
     /*div {
       margin: 0 auto;
     }*/
@@ -26,10 +43,6 @@
       /*left: 0px;*/
       background: transparent;
       font-family: "games";
-    }
-
-    #start {
-      /*font-family: "games" format('truetype');*/
     }
 
     #background {
@@ -59,11 +72,6 @@
       justify-content: space-between;
     }
 
-    .outer-container {
-      /*width: 80%;
-      text-align: center;*/
-    }
-
     .inner-container {
       width: 600px;
     }
@@ -78,17 +86,19 @@
       font-size: 20px;
     }
 
-    .instructions > h1, p {
+    .instructions>h1,
+    p {
       margin-top: 35px;
       margin-bottom: 35px;
       text-align: center;
     }
 
-    .instructions > h3, ul {
+    .instructions>h3,
+    ul {
       margin-left: 120px;
     }
 
-    .instructions > ul > li {
+    .instructions>ul>li {
       padding: 10px;
       list-style: none;
     }
@@ -107,21 +117,18 @@
       margin-top: 100px;
     }
 
-    .creator > div {
+    .creator>div {
       display: flex;
       justify-content: space-between;
       font-size: 70px;
     }
 
-    .creator > div > p {
-    }
-
-    .creator > div > p > a {
+    .creator>div>p>a {
       text-decoration: none;
       color: red;
     }
 
-    .creator > div > p > a:hover {
+    .creator>div>p>a:hover {
       cursor: pointer;
       color: blue;
     }
@@ -137,51 +144,130 @@
       top: 0px;
     }
 
-    </style>
-  </head>
-  <body>
-    <div class="entire-container">
-      <div class="instructions">
-        <h1>Instructions</h1>
+    #inputName {
+      z-index: 6;
+      position: absolute;
+      top: 50%;
+      left: 45%;
+      height: 25px;
+      width: 170px;
+    }
 
-        <h3>Controls:</h3>
-        <ul>
-          <li>A: LEFT</li>
-          <li>W: UP</li>
-          <li>D: RIGHT</li>
-          <li>S: DOWN</li>
-          <li>SPACE BAR: SHOOT</li>
-          <li>R: START/REFRESH GAME</li>
-        </ul>
+    #score-results {
+      font-size: 20px;
+      color: red;
+      height: 300px;
+      width: 300px;
+    }
 
-        <p>STOP THE INVASION!</p>
+    .scoreboard-title {
+      color: red;
+      margin-left: 50px;
+    }
 
+    .firebase-score {
+      display: flex;
+      justify-content: space-around;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="entire-container">
+    <div class="instructions">
+      <h1>Instructions</h1>
+
+      <h3>Controls:</h3>
+      <ul>
+        <li>A: LEFT</li>
+        <li>W: UP</li>
+        <li>D: RIGHT</li>
+        <li>S: DOWN</li>
+        <li>SPACE BAR: SHOOT</li>
+        <li>R: START/REFRESH GAME</li>
+      </ul>
+
+      <p>STOP THE INVASION!</p>
+
+    </div>
+
+
+    <div class="outer-container">
+      <div class="inner-container">
+        <h2 class="title"> Saviors </h2>
+        <canvas id="start" width="550" height="700"></canvas>
+        <canvas id="scoreBoard" width="550" height="700"></canvas>
+        <canvas id="background" width="550" height="700"></canvas>
+        <canvas id="enemy" width="550" height="700"></canvas>
+        <canvas id="canvas" width="550" height="700">
+          This browser doesn't support Canvas.
+        </canvas>
+        <canvas id="gameOver" width="550" height="700"></canvas>
+        <input id="inputName" placeholder="Write your name..." type="hidden">
       </div>
+    </div>
 
-
-      <div class="outer-container">
-        <div class="inner-container">
-          <h2 class="title"> Saviors </h2>
-          <canvas id="start" width="550" height="700"></canvas>
-          <canvas id="scoreBoard" width="550" height="700"></canvas>
-          <canvas id="background" width="550" height="700"></canvas>
-          <canvas id="enemy" width="550" height="700"></canvas>
-          <canvas id="canvas" width="550" height="700">
-            This browser doesn't support Canvas.
-          </canvas>
-          <canvas id="gameOver" width="550" height="700"></canvas>
+    <div class="right-section">
+      <div class="scoreBoard">
+        <h1 class="scoreboard-title">Highest Score</h1>
+        <div id="score-results">
         </div>
       </div>
-
       <div class="creator">
-        <h1>Created by: <br> Steven Ossorio</h1>
+        <h1>Created by:
+          <br> Steven Ossorio</h1>
 
         <div>
-          <p><a href="https://github.com/steven-ossorio"><i class="fa fa-github" aria-hidden="true"></i></a></p>
-          <p><a href="https://www.linkedin.com/in/steven-ossorio/"><i class="fa fa-linkedin" aria-hidden="true"></i></a></p>
-          <p><a href="http://www.stevenossorio.com"><img src="images/panda.png" alt=""></a></p>
+          <p>
+            <a href="https://github.com/steven-ossorio">
+              <i class="fa fa-github" aria-hidden="true"></i>
+            </a>
+          </p>
+          <p>
+            <a href="https://www.linkedin.com/in/steven-ossorio/">
+              <i class="fa fa-linkedin" aria-hidden="true"></i>
+            </a>
+          </p>
+          <p>
+            <a href="http://www.stevenossorio.com">
+              <img src="images/panda.png" alt="">
+            </a>
+          </p>
         </div>
       </div>
     </div>
-  </body>
+  </div>
+
+  <script>$("#score-results").empty();
+    $("#score-results").append(`<tr class="firebase-score">
+      <th>Rank<th>
+      <th>Name</th>
+      <th>Score</th>
+    </tr>`);
+    let results = [];
+    let orderedScore = [];
+    let scores = firebase
+      .database()
+      .ref("/scores")
+      .orderByChild("score");
+    let topFive = scores
+      .once("value")
+      .then(snapshot => {
+        snapshot.forEach(child => {
+          orderedScore.unshift(child.val());
+        });
+        for (let i = 0; i < 5; i++) {
+          let player = orderedScore[i];
+          let key = player.name;
+          let value = player.score;
+          $("#score-results").append(
+            `<tr class='firebase-score'><td>${i + 1}</td><td>${key}</td> <td>${value}</td></tr>`
+          );
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });</script>
+</body>
+
 </html>

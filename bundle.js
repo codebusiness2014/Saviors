@@ -137,42 +137,42 @@ module.exports = Bullet;
 var Game = __webpack_require__(2);
 var Background = __webpack_require__(5);
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener("DOMContentLoaded", function () {
   var preGame = function preGame() {
-    var canvasStart = document.getElementById('start');
+    var canvasStart = document.getElementById("start");
     if (canvasStart.getContext) {
-      var ctxStart = canvasStart.getContext('2d');
+      var ctxStart = canvasStart.getContext("2d");
 
       ctxStart.font = "30px games";
-      ctxStart.fillStyle = 'red';
+      ctxStart.fillStyle = "red";
       ctxStart.fillText("Press R to Start!", canvasStart.width / 2 - 110, canvasStart.height / 2);
     }
   };
 
   preGame();
-  document.addEventListener('keypress', function (e) {
-    if (e.key === 'r') {
-      var canvasStart = document.getElementById('start');
+  document.addEventListener("keypress", function (e) {
+    if (e.key === "r") {
+      var canvasStart = document.getElementById("start");
       if (canvasStart.getContext) {
-        var ctxStart = canvasStart.getContext('2d');
+        var ctxStart = canvasStart.getContext("2d");
         ctxStart.clearRect(0, 0, canvasStart.width, canvasStart.height);
       }
-      var _canvas = document.getElementById('canvas');
-      var canvasEnemy = document.getElementById('enemy');
-      var canvasScore = document.getElementById('scoreBoard');
-      var canvasGameOver = document.getElementById('gameOver');
+      var _canvas = document.getElementById("canvas");
+      var canvasEnemy = document.getElementById("enemy");
+      var canvasScore = document.getElementById("scoreBoard");
+      var canvasGameOver = document.getElementById("gameOver");
       if (_canvas.getContext) {
-        var ctx = _canvas.getContext('2d');
-        var ctxEnemy = canvasEnemy.getContext('2d');
-        var ctxScore = canvasScore.getContext('2d');
-        var ctxGameOver = canvasGameOver.getContext('2d');
+        var ctx = _canvas.getContext("2d");
+        var ctxEnemy = canvasEnemy.getContext("2d");
+        var ctxScore = canvasScore.getContext("2d");
+        var ctxGameOver = canvasGameOver.getContext("2d");
         new Game(ctx, _canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore, ctxGameOver, canvasGameOver).start();
       }
     }
   });
-  var canvasBack = document.getElementById('background');
+  var canvasBack = document.getElementById("background");
   if (canvasBack.getContext) {
-    var ctx = canvasBack.getContext('2d');
+    var ctx = canvasBack.getContext("2d");
     new Background(ctx, canvas).start();
   }
 });
@@ -215,6 +215,8 @@ var Game = function () {
     this.score = 0;
     this.enemyCounter = 0;
     this.restarted = false;
+    this.showInput = this.showInput.bind(this);
+    this.showLeaderBoard = this.showLeaderBoard.bind(this);
   }
 
   _createClass(Game, [{
@@ -254,9 +256,50 @@ var Game = function () {
       this.enemies = newArr;
     }
   }, {
+    key: "showLeaderBoard",
+    value: function showLeaderBoard() {
+      $("#score-results").empty();
+      $("#score-results").append("<tr>\n    <th>Rank</th>\n    <th>Name</th>\n    <th>Score</th>\n    </tr>");
+      var orderedScore = [];
+      var scores = firebase.database().ref("/scores").orderByChild("score");
+      var topFive = scores.once("value").then(function (snapshot) {
+        snapshot.forEach(function (child) {
+          orderedScore.unshift(child.val());
+        });
+        for (var i = 0; i < 5; i++) {
+          var player = orderedScore[i];
+          var key = player.name;
+          var value = player.score;
+          $("#score-results").append("<tr class='firebase-score'><td>" + (i + 1) + "</td><td>" + key + "</td> <td>" + value + "</td></tr>");
+        }
+      }).catch(function (err) {
+        console.log(err);
+      });
+    }
+  }, {
+    key: "showInput",
+    value: function showInput() {
+      var _this2 = this;
+
+      var input = document.getElementById("inputName").type = "text";
+      document.getElementById("inputName").addEventListener("keyup", function (e) {
+        e.preventDefault();
+        if (e.keyCode === 13) {
+          var scores = firebase.database().ref("scores/");
+          var name = document.getElementById("inputName").value;
+          var score = _this2.score;
+          var highScore = { name: name, score: score };
+          scores.push(highScore);
+
+          document.getElementById("inputName").type = "hidden";
+          _this2.showLeaderBoard();
+        }
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctxEnemy.clearRect(0, 0, this.canvasEnemy.width, this.canvasEnemy.height);
@@ -283,7 +326,7 @@ var Game = function () {
         this.ctxGameOver.fillStyle = "red";
         this.ctxGameOver.fillText("Play Again?", this.canvasGameOver.width / 2 - 100, this.canvasGameOver.height / 2);
         if (this.restarted === true) {
-          console.log(this.score);
+          this.showInput();
           this.restarted = false;
         }
       }
@@ -305,7 +348,7 @@ var Game = function () {
       this.aircraft.bullets.forEach(function (bullet) {
         bullet.draw();
         bullet.move();
-        _this2.enemies.forEach(function (enemy) {
+        _this3.enemies.forEach(function (enemy) {
           enemy.collidedWith(bullet);
           bullet.collidedWith(enemy);
         });
