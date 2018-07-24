@@ -396,7 +396,7 @@ var Aircraft = function () {
     this.spacePressed = false;
 
     this.image = new Image();
-    this.image.src = 'images/Lightning.png';
+    this.image.src = "images/Lightning.png";
 
     this.bullets = [];
     this.bulletClock = 0;
@@ -412,7 +412,7 @@ var Aircraft = function () {
   }
 
   _createClass(Aircraft, [{
-    key: 'draw',
+    key: "draw",
     value: function draw() {
       this.bulletClock += 2;
       this.internalClick += 2;
@@ -467,7 +467,7 @@ var Aircraft = function () {
       }
     }
   }, {
-    key: 'bulletConditional',
+    key: "bulletConditional",
     value: function bulletConditional() {
       var newArr = [];
       this.bullets.forEach(function (bullet, idx) {
@@ -479,31 +479,35 @@ var Aircraft = function () {
       this.bullets = newArr;
     }
   }, {
-    key: 'collidedWith',
+    key: "collidedWith",
     value: function collidedWith(object) {
       if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
         this.health -= 2;
       }
     }
   }, {
-    key: 'bindMovements',
+    key: "bindMovements",
     value: function bindMovements() {
       var _this = this;
 
-      document.addEventListener('keydown', function (e) {
+      document.addEventListener("keydown", function (e) {
         switch (e.keyCode) {
           case 65:
+          case 37:
             _this.leftPressed = true;
             _this.rightPressed = false;
             break;
           case 87:
+          case 38:
             _this.upPressed = true;
             break;
           case 68:
+          case 39:
             _this.rightPressed = true;
             _this.leftPressed = false;
             break;
           case 83:
+          case 40:
             _this.downPressed = true;
             break;
           case 32:
@@ -514,18 +518,22 @@ var Aircraft = function () {
         }
       });
 
-      document.addEventListener('keyup', function (e) {
+      document.addEventListener("keyup", function (e) {
         switch (e.keyCode) {
           case 65:
+          case 37:
             _this.leftPressed = false;
             break;
           case 87:
+          case 38:
             _this.upPressed = false;
             break;
           case 68:
+          case 39:
             _this.rightPressed = false;
             break;
           case 83:
+          case 40:
             _this.downPressed = false;
             break;
           case 32:
