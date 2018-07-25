@@ -86,35 +86,35 @@ var Bullet = function () {
     this.draw = this.draw.bind(this);
     this.move = this.move.bind(this);
     this.image = new Image();
-    this.image.src = 'images/space_bullets.png';
+    this.image.src = "images/space_bullets.png";
     this.collided = false;
 
     this.collidedWith = this.collidedWith.bind(this);
   }
 
   _createClass(Bullet, [{
-    key: 'draw',
+    key: "draw",
     value: function draw() {
       this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x - 4, this.y - 10, this.width, this.height);
       this.move();
       this.enemyMove();
     }
   }, {
-    key: 'collidedWith',
+    key: "collidedWith",
     value: function collidedWith(object) {
       if (this.x < object.x + object.width + 50 && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
         this.collided = true;
       }
     }
   }, {
-    key: 'move',
+    key: "move",
     value: function move() {
       if (this.y > 0) {
         this.y -= 6;
       }
     }
   }, {
-    key: 'enemyMove',
+    key: "enemyMove",
     value: function enemyMove() {
       if (this.y < this.ctx.canvas.height + 10) {
         this.y += 6;
@@ -207,7 +207,7 @@ var Game = function () {
     this.canvasGameOver = canvasGameOver;
     this.start = this.start.bind(this);
     this.render = this.render.bind(this);
-    this.aircraft = new Aircraft(this.canvas.width / 2, this.canvas.height - 30, 40, 40, this.ctx);
+    this.aircraft = new Aircraft(this.canvas.width / 2, this.canvas.height - 30, 50, 50, this.ctx);
     this.internalClick = 0;
     this.enemy = new Enemies(100, 0, 20, 20, this.ctxEnemy);
     this.enemyTwo = new Enemies(100, 0, 20, 20, this.ctxEnemy);
@@ -495,7 +495,8 @@ var Aircraft = function () {
   }, {
     key: "collidedWith",
     value: function collidedWith(object) {
-      if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y - object.height && this.height + this.y > object.y) {
+      if (this.x < object.x + 30 + object.width && this.x + this.width > object.x + 30 && this.y + 30 < object.y + 30 + object.height + 30 && this.height + this.y > object.y + 30) {
+        console.log("hit");
         this.health -= 2;
       }
     }
