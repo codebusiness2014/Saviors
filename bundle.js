@@ -496,7 +496,6 @@ var Aircraft = function () {
     key: "collidedWith",
     value: function collidedWith(object) {
       if (this.x < object.x + 30 + object.width && this.x + this.width > object.x + 30 && this.y + 30 < object.y + 30 + object.height + 30 && this.height + this.y > object.y + 30) {
-        console.log("hit");
         this.health -= 2;
       }
     }
