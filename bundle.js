@@ -151,9 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   preGame();
   document.addEventListener("keypress", function (e) {
-    document.getElementById("inputName").type = "hidden";
-
-    if (e.key === "r") {
+    if (e.key === "r" && document.getElementById("inputName").type === "hidden") {
       var canvasStart = document.getElementById("start");
       if (canvasStart.getContext) {
         var ctxStart = canvasStart.getContext("2d");
@@ -269,6 +267,7 @@ var Game = function () {
           var value = player.score;
           $("#score-results").append("<tr class='firebase-score'><td>" + (i + 1) + "</td><td>" + key + "</td> <td>" + value + "</td></tr>");
         }
+        orderedScore = [];
       }).catch(function (err) {
         console.log(err);
       });
@@ -289,6 +288,7 @@ var Game = function () {
           scores.push(highScore);
 
           document.getElementById("inputName").type = "hidden";
+
           _this2.showLeaderBoard();
         }
       });
@@ -336,19 +336,19 @@ var Game = function () {
         this.ctxScore.strokeRect(20, 20, 100, 25);
       }
 
-      if (this.score < 80) {
-        if (this.internalClick === 400 && this.enemies.length < 10) {
+      if (this.score < 100) {
+        if (this.internalClick === 300 && this.enemies.length < 10) {
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.internalClick = 0;
         }
-      } else if (this.score < 120) {
-        if (this.internalClick === 250 && this.enemies.length < 20) {
+      } else if (this.score < 250) {
+        if (this.internalClick === 200 && this.enemies.length < 20) {
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.internalClick = 0;
         }
-      } else if (this.score > 120) {
+      } else if (this.score > 250) {
         if (this.enemies.length < 50) {
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
