@@ -151,6 +151,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   preGame();
   document.addEventListener("keypress", function (e) {
+    document.getElementById("inputName").type = "hidden";
+
     if (e.key === "r") {
       var canvasStart = document.getElementById("start");
       if (canvasStart.getContext) {
@@ -205,7 +207,7 @@ var Game = function () {
     this.canvasGameOver = canvasGameOver;
     this.start = this.start.bind(this);
     this.render = this.render.bind(this);
-    this.aircraft = new Aircraft(this.canvas.width / 2, this.canvas.height - 30, 20, 20, this.ctx);
+    this.aircraft = new Aircraft(this.canvas.width / 2, this.canvas.height - 30, 40, 40, this.ctx);
     this.internalClick = 0;
     this.enemy = new Enemies(100, 0, 20, 20, this.ctxEnemy);
     this.enemyTwo = new Enemies(100, 0, 20, 20, this.ctxEnemy);
@@ -231,19 +233,14 @@ var Game = function () {
 
       var newArr = [];
       this.enemies.forEach(function (enemy) {
-        // if (enemy.health === 0 && this.enemyCounter < 1000) {
-        //   this.enemyCounter += 1;
-        //   this.ctxEnemy.drawImage(enemy.image, 0, 354, 50, 50, enemy.x, enemy.y, 60, 60);
-        // }
-
         if (enemy.health === 0) {
           _this.score += 20;
         }
         if (enemy.health > 0) {
           newArr.push(enemy);
+          enemy.draw();
+          enemy.move();
         }
-        enemy.draw();
-        enemy.move();
         _this.aircraft.collidedWith(enemy);
         enemy.bullets.forEach(function (bullet) {
           bullet.draw();
@@ -281,7 +278,7 @@ var Game = function () {
     value: function showInput() {
       var _this2 = this;
 
-      var input = document.getElementById("inputName").type = "text";
+      document.getElementById("inputName").type = "text";
       document.getElementById("inputName").addEventListener("keyup", function (e) {
         e.preventDefault();
         if (e.keyCode === 13) {
@@ -339,8 +336,24 @@ var Game = function () {
         this.ctxScore.strokeRect(20, 20, 100, 25);
       }
 
-      if (this.internalClick % 200 === 0 && this.enemies.length < 10) {
-        this.enemies.push(new Enemies(100, 0, 20, 20, this.ctxEnemy));
+      if (this.score < 80) {
+        if (this.internalClick === 400 && this.enemies.length < 10) {
+          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+          this.internalClick = 0;
+        }
+      } else if (this.score < 120) {
+        if (this.internalClick === 250 && this.enemies.length < 20) {
+          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+          this.internalClick = 0;
+        }
+      } else if (this.score > 120) {
+        if (this.enemies.length < 50) {
+          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+          this.internalClick = 0;
+        }
       }
 
       this.enemiesRender();
@@ -425,6 +438,7 @@ var Aircraft = function () {
       }
 
       this.ctx.drawImage(this.image, this.count, 0, 30, 30, this.x - 11, this.y - 8, 40, 40);
+
       this.bulletConditional();
 
       if (this.upPressed && this.y > this.width && this.spacePressed && this.bulletClock > 80 && this.bullets.length <= 6) {
@@ -481,7 +495,7 @@ var Aircraft = function () {
   }, {
     key: "collidedWith",
     value: function collidedWith(object) {
-      if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
+      if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y - object.height && this.height + this.y > object.y) {
         this.health -= 2;
       }
     }
@@ -575,7 +589,7 @@ var Enemy = function () {
     this.draw = this.draw.bind(this);
 
     this.image = new Image();
-    this.image.src = 'images/aliens.png';
+    this.image.src = "images/aliens.png";
 
     this.row = 0;
     this.column = -2;
@@ -607,7 +621,7 @@ var Enemy = function () {
   }
 
   _createClass(Enemy, [{
-    key: 'draw',
+    key: "draw",
     value: function draw() {
       this.bulletConditional();
       this.internalClick += 2;
@@ -624,10 +638,8 @@ var Enemy = function () {
       if (this.health === 0) {
         this.enemyCounter += 1;
         this.ctx.drawImage(this.image, 0, 354, 50, 50, this.x, this.y, 60, 60);
-        // this.enemyDeath += 2;
-        // if (this.enemyDeath % 30 === 0) {
-        //   this.enemyDeathCounter += 32;
-        // }
+      } else {
+        this.ctx.drawImage(this.image, this.row, 0, 50, 50, this.x, this.y, 50, 50);
       }
       if (this.animatedRow === 384 && this.column === 39) {
         this.animatedRow = 0;
@@ -640,10 +652,9 @@ var Enemy = function () {
       } else if (this.animatedRow % 47 === 0) {
         this.row += 47;
       }
-      this.ctx.drawImage(this.image, this.row, 0, 50, 50, this.x, this.y, 60, 60);
     }
   }, {
-    key: 'move',
+    key: "move",
     value: function move() {
       if (this.y < this.ctx.canvas.height / 2) {
         this.y += 2;
@@ -662,7 +673,7 @@ var Enemy = function () {
       }
     }
   }, {
-    key: 'movement',
+    key: "movement",
     value: function movement() {
       this.turnAllFalse();
 
@@ -685,7 +696,7 @@ var Enemy = function () {
       }
     }
   }, {
-    key: 'collidedWith',
+    key: "collidedWith",
     value: function collidedWith(object) {
       if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
         this.health -= 20;
@@ -693,7 +704,7 @@ var Enemy = function () {
       }
     }
   }, {
-    key: 'turnAllFalse',
+    key: "turnAllFalse",
     value: function turnAllFalse() {
       this.left = false;
       this.right = false;
@@ -701,35 +712,35 @@ var Enemy = function () {
       this.down = false;
     }
   }, {
-    key: 'moveLeft',
+    key: "moveLeft",
     value: function moveLeft() {
       if (this.x > 0) {
         this.x -= 2;
       }
     }
   }, {
-    key: 'moveUp',
+    key: "moveUp",
     value: function moveUp() {
       if (this.y > 0) {
         this.y -= 2;
       }
     }
   }, {
-    key: 'moveDown',
+    key: "moveDown",
     value: function moveDown() {
       if (this.y < this.ctx.canvas.height / 1.4) {
         this.y += 2;
       }
     }
   }, {
-    key: 'moveRight',
+    key: "moveRight",
     value: function moveRight() {
       if (this.x < this.ctx.canvas.width - 50) {
         this.x += 2;
       }
     }
   }, {
-    key: 'bulletConditional',
+    key: "bulletConditional",
     value: function bulletConditional() {
       var _this = this;
 
