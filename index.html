@@ -195,7 +195,7 @@
     }
 
     #music {
-      color: blue;
+      color: red;
       height: 50px;
       margin-left: 155px;
       font-size: 40px;
@@ -220,7 +220,7 @@
 
       <p>STOP THE INVASION!</p>
       <button id="music">
-        <i class="fa fa-volume-down"></i>
+        <i id="music-image" class="fa fa-volume-up"></i>
       </button>
     </div>
 
@@ -279,8 +279,12 @@
       if (music === true) {
         audio.pause();
         music = false;
+        $("#music-image").removeClass()
+        $("#music-image").addClass("fa fa-volume-off")
       } else {
         music = true;
+        $("#music-image").removeClass()
+        $("#music-image").addClass("fa fa-volume-up")
         audio = new Audio('./music/space.mp3');
         audio.play();
       }

@@ -422,6 +422,7 @@ var Aircraft = function () {
 
     this.collidedWith = this.collidedWith.bind(this);
     this.health = 100;
+    this.shootingAffect = this.shootingAffect.bind(this);
   }
 
   _createClass(Aircraft, [{
@@ -478,7 +479,14 @@ var Aircraft = function () {
         this.bulletClock = 0;
         this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx));
         this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx));
+        this.shootingAffect();
       }
+    }
+  }, {
+    key: "shootingAffect",
+    value: function shootingAffect() {
+      var audio = new Audio("../music/laser.wav");
+      audio.play();
     }
   }, {
     key: "bulletConditional",
