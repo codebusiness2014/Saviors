@@ -626,9 +626,16 @@ var Enemy = function () {
 
     this.enemyDeath = 0;
     this.enemyDeathCounter = 0;
+    this.explosionMusic = this.explosionMusic.bind(this);
   }
 
   _createClass(Enemy, [{
+    key: "explosionMusic",
+    value: function explosionMusic() {
+      var audio = new Audio("../music/atari_boom.wav");
+      audio.play();
+    }
+  }, {
     key: "draw",
     value: function draw() {
       this.bulletConditional();
@@ -709,6 +716,7 @@ var Enemy = function () {
       if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
         this.health -= 20;
         this.shield = true;
+        this.explosionMusic();
       }
     }
   }, {
