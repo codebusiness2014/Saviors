@@ -322,6 +322,7 @@ var Game = function () {
         this.ctxGameOver.font = "30px games";
         this.ctxGameOver.fillStyle = "red";
         this.ctxGameOver.fillText("Play Again?", this.canvasGameOver.width / 2 - 100, this.canvasGameOver.height / 2);
+
         if (this.restarted === true) {
           this.showInput();
           this.restarted = false;
