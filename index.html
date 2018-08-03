@@ -199,6 +199,9 @@
       height: 50px;
       margin-left: 155px;
       font-size: 40px;
+      outline: none;
+      background-color: transparent;
+      border: none;
     }
   </style>
 </head>
@@ -272,8 +275,11 @@
 
   <script>
     music = true;
+    audioGameOver = new Audio('./music/gameover.mp3')
     audio = new Audio('./music/space.mp3');
-    audio.play();
+    audio.play().then(() => {
+      console.log("Music is playing");
+    }).catch(err => console.log(err));
 
     $('#music').click((() => {
       if (music === true) {

@@ -288,7 +288,6 @@ var Game = function () {
           scores.push(highScore);
 
           document.getElementById("inputName").type = "hidden";
-
           _this2.showLeaderBoard();
         }
       });
@@ -645,7 +644,7 @@ var Enemy = function () {
 
       if (this.internalClick % 500 === 0) {
         this.internalClick = 0;
-        this.bullets.push(new Bullets(this.x + 30, this.y - 35, 15, 15, this.ctx));
+        this.bullets.push(new Bullets(this.x + 30, this.y + 35, 15, 15, this.ctx));
       }
 
       if (this.internalClick % 200 === 0) {
@@ -765,6 +764,7 @@ var Enemy = function () {
       this.bullets.forEach(function (bullet) {
         if (bullet.y < _this.ctx.canvas.height) {
           // this.bullets.splice(idx, 1);
+          console.log(bullet.collidedWith);
           newArr.push(bullet);
         }
       });
