@@ -468,12 +468,12 @@ var Aircraft = function () {
 
       if (this.upPressed && this.y > this.width) {
         this.y -= 6;
-      } else if (this.downPressed && this.y < this.ctx.canvas.height - this.width - 10) {
+      } else if (this.downPressed && this.y < this.ctx.canvas.height - this.width + 20) {
         this.y += 6;
       }
-      if (this.leftPressed && this.x > this.width) {
+      if (this.leftPressed && this.x > this.width - 30) {
         this.x -= 6;
-      } else if (this.rightPressed && this.x < this.ctx.canvas.width - this.width - 15) {
+      } else if (this.rightPressed && this.x < this.ctx.canvas.width - this.width + 15) {
         this.x += 6;
       } else if (this.spacePressed && this.bulletClock > 30) {
         this.bulletClock = 0;
@@ -762,7 +762,7 @@ var Enemy = function () {
 
       var newArr = [];
       this.bullets.forEach(function (bullet) {
-        if (bullet.y < _this.ctx.canvas.height) {
+        if (bullet.y < _this.ctx.canvas.height && bullet.collidedWith === false) {
           // this.bullets.splice(idx, 1);
           console.log(bullet.collidedWith);
           newArr.push(bullet);
