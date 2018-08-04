@@ -113,19 +113,6 @@ var Bullet = function () {
       this.enemyMove();
     }
   }, {
-    key: "testing",
-    value: function testing() {
-      if (this.object === "ship") {
-        this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x, this.y - 10, this.width, this.height);
-        this.move();
-        this.enemyMove();
-      } else {
-        this.ctx.drawImage(this.image, 200, 200, 60, 60, this.x - 4, this.y - 10, this.width, this.height);
-        this.move();
-        this.enemyMove();
-      }
-    }
-  }, {
     key: "collidedWith",
     value: function collidedWith(object) {
       if (this.x < object.x + object.width + 50 && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
@@ -748,7 +735,7 @@ var Enemy = function () {
       if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
         this.health -= 20;
         this.shield = true;
-        // this.explosionMusic();
+        this.explosionMusic();
       }
     }
   }, {
