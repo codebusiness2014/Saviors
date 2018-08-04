@@ -684,12 +684,12 @@ var Enemy = function () {
       if (this.internalClick % 200 === 0) {
         this.movement();
       }
-      if (this.health === 0) {
-        this.enemyCounter += 1;
-        this.ctx.drawImage(this.image, 0, 354, 50, 50, this.x, this.y, 60, 60);
-      } else {
-        this.ctx.drawImage(this.image, this.row, 0, 50, 50, this.x, this.y, 50, 50);
-      }
+      // if (this.health === 0) {
+      //   this.enemyCounter += 1;
+      //   this.ctx.drawImage(this.image, 0, 354, 50, 50, this.x, this.y, 60, 60);
+      // } else {
+      this.ctx.drawImage(this.image, this.row, 0, 50, 50, this.x, this.y, 50, 50);
+      // }
       if (this.animatedRow === 384 && this.column === 39) {
         this.animatedRow = 0;
         this.row = 0;
@@ -968,7 +968,7 @@ var CollidedBullet = function () {
       this.animatedRow += 4;
 
       if (this.animatedRow < 80) {
-        this.ctx.drawImage(this.image, 0, 0, 50, 50, this.x, this.y, 30, 30);
+        this.ctx.drawImage(this.image, 0, 0, 50, 50, this.x, this.y - 10, 20, 20);
       }
     }
   }]);
