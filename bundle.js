@@ -96,8 +96,27 @@ var Bullet = function () {
   _createClass(Bullet, [{
     key: "draw",
     value: function draw() {
+      var x = void 0;
+      var y = void 0;
+      var h = void 0;
+      var w = void 0;
       if (this.object === "ship") {
-        this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x - 4, this.y - 10, this.width, this.height);
+        x = 200;
+        y = 200;
+        h = 60;
+        w = 60;
+      } else {
+        x = 0, y = 0, h = 30, w = 30;
+      }
+      this.ctx.drawImage(this.image, x, y, h, w, this.x - 10, this.y - 10, this.width, this.height);
+      this.move();
+      this.enemyMove();
+    }
+  }, {
+    key: "testing",
+    value: function testing() {
+      if (this.object === "ship") {
+        this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x, this.y - 10, this.width, this.height);
         this.move();
         this.enemyMove();
       } else {
@@ -344,19 +363,25 @@ var Game = function () {
       }
 
       if (this.score < 100) {
-        if (this.internalClick === 150 && this.enemies.length < 10) {
+        if (this.internalClick === 200 && this.enemies.length < 10) {
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.internalClick = 0;
         }
-      } else if (this.score < 250) {
-        if (this.internalClick === 200 && this.enemies.length < 20) {
+      } else if (this.score < 150) {
+        if (this.internalClick === 150 && this.enemies.length < 20) {
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.internalClick = 0;
         }
-      } else if (this.score > 250) {
-        if (this.enemies.length < 50) {
+      } else if (this.score < 300) {
+        if (this.internalClick === 100 && this.enemies.length < 40) {
+          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+          this.internalClick = 0;
+        }
+      } else if (this.score < 800) {
+        if (this.internalClick === 50 && this.enemies.length < 40) {
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.internalClick = 0;
@@ -452,7 +477,7 @@ var Aircraft = function () {
       if (this.upPressed && this.y > this.width && this.spacePressed && this.bulletClock > 80 && this.bullets.length <= 6) {
         this.y -= 6;
         this.bulletClock = 0;
-        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctxd, "ship"));
+        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx, "ship"));
         this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx, "ship"));
       } else if (this.downPressed && this.y < this.ctx.canvas.height - this.width - 10 && this.spacePressed && this.bulletClock > 80 && this.bullets.length <= 6) {
         this.y += 6;
@@ -723,7 +748,7 @@ var Enemy = function () {
       if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
         this.health -= 20;
         this.shield = true;
-        this.explosionMusic();
+        // this.explosionMusic();
       }
     }
   }, {
