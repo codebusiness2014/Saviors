@@ -75,7 +75,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Bullet = function () {
-  function Bullet(x, y, width, height, ctx) {
+  function Bullet(x, y, width, height, ctx, object) {
     _classCallCheck(this, Bullet);
 
     this.x = x;
@@ -83,6 +83,7 @@ var Bullet = function () {
     this.width = width;
     this.height = height;
     this.ctx = ctx;
+    this.object = object;
     this.draw = this.draw.bind(this);
     this.move = this.move.bind(this);
     this.image = new Image();
@@ -95,9 +96,15 @@ var Bullet = function () {
   _createClass(Bullet, [{
     key: "draw",
     value: function draw() {
-      this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x - 4, this.y - 10, this.width, this.height);
-      this.move();
-      this.enemyMove();
+      if (this.object === "ship") {
+        this.ctx.drawImage(this.image, 0, 0, 30, 30, this.x - 4, this.y - 10, this.width, this.height);
+        this.move();
+        this.enemyMove();
+      } else {
+        this.ctx.drawImage(this.image, 200, 200, 60, 60, this.x - 4, this.y - 10, this.width, this.height);
+        this.move();
+        this.enemyMove();
+      }
     }
   }, {
     key: "collidedWith",
@@ -337,7 +344,7 @@ var Game = function () {
       }
 
       if (this.score < 100) {
-        if (this.internalClick === 300 && this.enemies.length < 10) {
+        if (this.internalClick === 150 && this.enemies.length < 10) {
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
           this.internalClick = 0;
@@ -445,25 +452,25 @@ var Aircraft = function () {
       if (this.upPressed && this.y > this.width && this.spacePressed && this.bulletClock > 80 && this.bullets.length <= 6) {
         this.y -= 6;
         this.bulletClock = 0;
-        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx));
-        this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx));
+        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctxd, "ship"));
+        this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx, "ship"));
       } else if (this.downPressed && this.y < this.ctx.canvas.height - this.width - 10 && this.spacePressed && this.bulletClock > 80 && this.bullets.length <= 6) {
         this.y += 6;
         this.bulletClock = 0;
-        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx));
-        this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx));
+        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx, "ship"));
+        this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx, "ship"));
       }
 
       if (this.leftPressed && this.x > this.width && this.spacePressed && this.bulletClock > 30 && this.bullets.length <= 12) {
         this.x -= 6;
         this.bulletClock = 0;
-        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx));
-        this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx));
+        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx, "ship"));
+        this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx, "ship"));
       } else if (this.rightPressed && this.x < this.ctx.canvas.width - this.width - 15 && this.spacePressed && this.bulletClock > 30 && this.bullets.length <= 12) {
         this.x += 6;
         this.bulletClock = 0;
-        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx));
-        this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx));
+        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx, "ship"));
+        this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx, "ship"));
       }
 
       if (this.upPressed && this.y > this.width) {
@@ -477,8 +484,8 @@ var Aircraft = function () {
         this.x += 6;
       } else if (this.spacePressed && this.bulletClock > 30) {
         this.bulletClock = 0;
-        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx));
-        this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx));
+        this.bullets.push(new Bullets(this.x - 5, this.y - 5, 15, 15, this.ctx, "ship"));
+        this.bullets.push(new Bullets(this.x + 20, this.y - 5, 15, 15, this.ctx, "ship"));
         this.shootingAffect();
       }
     }
@@ -762,9 +769,7 @@ var Enemy = function () {
 
       var newArr = [];
       this.bullets.forEach(function (bullet) {
-        if (bullet.y < _this.ctx.canvas.height && bullet.collidedWith === false) {
-          // this.bullets.splice(idx, 1);
-          console.log(bullet.collidedWith);
+        if (bullet.y < _this.ctx.canvas.height) {
           newArr.push(bullet);
         }
       });
