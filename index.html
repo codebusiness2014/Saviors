@@ -278,7 +278,6 @@
     audioGameOver = new Audio('./music/gameover.mp3')
     audio = new Audio('./music/space.mp3');
     audio.play().then(() => {
-      console.log("Music is playing");
     }).catch(err => console.log(err));
 
     $('#music').click((() => {
