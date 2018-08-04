@@ -203,6 +203,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Aircraft = __webpack_require__(3);
 var Enemies = __webpack_require__(4);
+var DeadAlien = __webpack_require__(6);
+var CollidedBullet = __webpack_require__(7);
 
 var Game = function () {
   function Game(ctx, canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore, ctxGameOver, canvasGameOver) {
@@ -223,6 +225,8 @@ var Game = function () {
     this.enemy = new Enemies(100, 0, 20, 20, this.ctxEnemy);
     this.enemyTwo = new Enemies(100, 0, 20, 20, this.ctxEnemy);
     this.enemies = [this.enemy, this.enemyTwo];
+    this.deadEnemies = [];
+    this.CollidedBullet = [];
 
     this.enemiesRender = this.enemiesRender.bind(this);
     this.score = 0;
@@ -246,9 +250,13 @@ var Game = function () {
       this.enemies.forEach(function (enemy) {
         if (enemy.health === 0) {
           _this.score += 20;
+          _this.deadEnemies.push(new DeadAlien(enemy.x, enemy.y, enemy.height, enemy.width, enemy.ctx));
         }
         if (enemy.health > 0) {
           newArr.push(enemy);
+          _this.CollidedBullet.forEach(function (bullet) {
+            bullet.draw();
+          });
           enemy.draw();
           enemy.move();
         }
@@ -259,6 +267,10 @@ var Game = function () {
 
           _this.aircraft.collidedWith(bullet);
         });
+      });
+
+      this.deadEnemies.forEach(function (enemy) {
+        enemy.draw();
       });
 
       this.enemies = newArr;
@@ -384,6 +396,9 @@ var Game = function () {
           enemy.collidedWith(bullet);
           bullet.collidedWith(enemy);
         });
+        if (bullet.collided === true) {
+          _this3.CollidedBullet.push(new CollidedBullet(bullet.x, bullet.y, bullet.height, bullet.width, bullet.ctx));
+        }
       });
 
       requestAnimationFrame(this.render);
@@ -736,6 +751,7 @@ var Enemy = function () {
         this.health -= 20;
         this.shield = true;
         this.explosionMusic();
+        this.ctx.drawImage(this.image, this.row, 0, 100, 100, this.x, this.y, 50, 50);
       }
     }
   }, {
@@ -854,6 +870,113 @@ var Background = function () {
 }();
 
 module.exports = Background;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DeadAlien = function () {
+  function DeadAlien(x, y, width, height, ctx) {
+    _classCallCheck(this, DeadAlien);
+
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.ctx = ctx;
+    this.draw = this.draw.bind(this);
+
+    this.image = new Image();
+    this.image.src = "images/aliens.png";
+
+    this.row = 0;
+    this.column = -2;
+
+    this.internalClick = 0;
+
+    this.animatedRow = 0;
+    this.firstRowCounter = 0;
+  }
+
+  _createClass(DeadAlien, [{
+    key: "draw",
+    value: function draw() {
+      this.internalClick += 2;
+      this.animatedRow += 4;
+
+      this.ctx.drawImage(this.image, this.row, 280, 50, 50, this.x, this.y, 50, 50);
+
+      if (this.animatedRow === 160) {
+        this.animatedRow = 0;
+        this.firstRowCounter += 1;
+        this.firstRowCounter < 3 ? this.row += 50 : this.row += 65;
+        this.column = 0;
+      }
+    }
+  }]);
+
+  return DeadAlien;
+}();
+
+module.exports = DeadAlien;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var CollidedBullet = function () {
+  function CollidedBullet(x, y, width, height, ctx) {
+    _classCallCheck(this, CollidedBullet);
+
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.ctx = ctx;
+    this.draw = this.draw.bind(this);
+
+    this.image = new Image();
+    this.image.src = "images/explosion.png";
+
+    this.row = 0;
+    this.column = -2;
+
+    this.internalClick = 0;
+
+    this.animatedRow = 0;
+    this.firstRowCounter = 0;
+  }
+
+  _createClass(CollidedBullet, [{
+    key: "draw",
+    value: function draw() {
+      this.internalClick += 2;
+      this.animatedRow += 4;
+
+      if (this.animatedRow < 80) {
+        this.ctx.drawImage(this.image, 0, 0, 50, 50, this.x, this.y, 30, 30);
+      }
+    }
+  }]);
+
+  return CollidedBullet;
+}();
+
+module.exports = CollidedBullet;
 
 /***/ })
 /******/ ]);
