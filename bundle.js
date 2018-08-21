@@ -148,7 +148,7 @@ module.exports = Bullet;
 
 
 var Game = __webpack_require__(2);
-var Background = __webpack_require__(5);
+var Background = __webpack_require__(7);
 
 document.addEventListener("DOMContentLoaded", function () {
   var preGame = function preGame() {
@@ -203,8 +203,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Aircraft = __webpack_require__(3);
 var Enemies = __webpack_require__(4);
-var DeadAlien = __webpack_require__(6);
-var CollidedBullet = __webpack_require__(7);
+var DeadAlien = __webpack_require__(5);
+var CollidedBullet = __webpack_require__(6);
 
 var Game = function () {
   function Game(ctx, canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore, ctxGameOver, canvasGameOver) {
@@ -250,7 +250,9 @@ var Game = function () {
       this.enemies.forEach(function (enemy) {
         if (enemy.health === 0) {
           _this.score += 20;
-          _this.deadEnemies.push(new DeadAlien(enemy.x, enemy.y, enemy.height, enemy.width, enemy.ctx));
+          // this.deadEnemies.push(
+          //   new DeadAlien(enemy.x, enemy.y, enemy.height, enemy.width, enemy.ctx)
+          // );
         }
         if (enemy.health > 0) {
           newArr.push(enemy);
@@ -269,9 +271,9 @@ var Game = function () {
         });
       });
 
-      this.deadEnemies.forEach(function (enemy) {
-        enemy.draw();
-      });
+      // this.deadEnemies.forEach(enemy => {
+      //   enemy.draw();
+      // });
 
       this.enemies = newArr;
     }
@@ -361,31 +363,32 @@ var Game = function () {
         this.ctxScore.strokeRect(20, 20, 100, 25);
       }
 
-      if (this.score < 100) {
-        if (this.internalClick === 200 && this.enemies.length < 10) {
-          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-          this.internalClick = 0;
-        }
-      } else if (this.score < 150) {
-        if (this.internalClick === 150 && this.enemies.length < 20) {
-          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-          this.internalClick = 0;
-        }
-      } else if (this.score < 300) {
-        if (this.internalClick === 100 && this.enemies.length < 40) {
-          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-          this.internalClick = 0;
-        }
-      } else if (this.score < 800) {
-        if (this.internalClick === 50 && this.enemies.length < 40) {
-          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-          this.internalClick = 0;
-        }
+      // if (this.score < 100) {
+      if (this.internalClick === 200 && this.enemies.length < 10) {
+        this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+        this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+        this.internalClick = 0;
       }
+      // }
+      // } else if (this.enemies.length < 10) {
+      //   if (this.internalClick === 150) {
+      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+      //     this.internalClick = 0;
+      //   }
+      // } else if (this.enemies.length < 10) {
+      //   if (this.internalClick === 100) {
+      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+      //     this.internalClick = 0;
+      //   }
+      // } else if (this.enemies.length < 10) {
+      //   if (this.internalClick === 50 && this.enemies.length < 40) {
+      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+      //     this.internalClick = 0;
+      //   }
+      // }
 
       this.enemiesRender();
 
@@ -817,66 +820,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Background = function () {
-  function Background(ctx, canvas) {
-    _classCallCheck(this, Background);
-
-    this.ctx = ctx;
-    this.canvas = canvas;
-    this.start = this.start.bind(this);
-    this.render = this.render.bind(this);
-
-    this.image = new Image();
-    this.image.src = 'images/nebula.png';
-
-    this.speed = 2;
-    this.y = 0;
-    this.draw = this.draw.bind(this);
-    this.draw();
-  }
-
-  _createClass(Background, [{
-    key: 'draw',
-    value: function draw() {
-      this.y += this.speed;
-      this.ctx.drawImage(this.image, -50, this.y);
-      this.ctx.drawImage(this.image, -50, this.y - this.canvas.height);
-
-      if (this.y > this.canvas.height) {
-        this.image.src = 'images/nebula.png';
-        this.y = 0;
-      }
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-      this.draw();
-      requestAnimationFrame(this.render);
-    }
-  }, {
-    key: 'start',
-    value: function start() {
-      this.render();
-    }
-  }]);
-
-  return Background;
-}();
-
-module.exports = Background;
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var DeadAlien = function () {
   function DeadAlien(x, y, width, height, ctx) {
     _classCallCheck(this, DeadAlien);
@@ -908,7 +851,7 @@ var DeadAlien = function () {
 
       this.ctx.drawImage(this.image, this.row, 280, 50, 50, this.x, this.y, 50, 50);
 
-      if (this.animatedRow === 160) {
+      if (this.animatedRow === 60) {
         this.animatedRow = 0;
         this.firstRowCounter += 1;
         this.firstRowCounter < 3 ? this.row += 50 : this.row += 65;
@@ -923,7 +866,7 @@ var DeadAlien = function () {
 module.exports = DeadAlien;
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -972,6 +915,66 @@ var CollidedBullet = function () {
 }();
 
 module.exports = CollidedBullet;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Background = function () {
+  function Background(ctx, canvas) {
+    _classCallCheck(this, Background);
+
+    this.ctx = ctx;
+    this.canvas = canvas;
+    this.start = this.start.bind(this);
+    this.render = this.render.bind(this);
+
+    this.image = new Image();
+    this.image.src = 'images/nebula.png';
+
+    this.speed = 2;
+    this.y = 0;
+    this.draw = this.draw.bind(this);
+    this.draw();
+  }
+
+  _createClass(Background, [{
+    key: 'draw',
+    value: function draw() {
+      this.y += this.speed;
+      this.ctx.drawImage(this.image, -50, this.y);
+      this.ctx.drawImage(this.image, -50, this.y - this.canvas.height);
+
+      if (this.y > this.canvas.height) {
+        this.image.src = 'images/nebula.png';
+        this.y = 0;
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+      this.draw();
+      requestAnimationFrame(this.render);
+    }
+  }, {
+    key: 'start',
+    value: function start() {
+      this.render();
+    }
+  }]);
+
+  return Background;
+}();
+
+module.exports = Background;
 
 /***/ })
 /******/ ]);
