@@ -246,16 +246,15 @@ var Game = function () {
     value: function enemiesRender() {
       var _this = this;
 
-      var newArr = [];
+      var enemies = [];
+      var deadEnemies = [];
       this.enemies.forEach(function (enemy) {
         if (enemy.health === 0) {
           _this.score += 20;
-          // this.deadEnemies.push(
-          //   new DeadAlien(enemy.x, enemy.y, enemy.height, enemy.width, enemy.ctx)
-          // );
+          _this.deadEnemies.push(new DeadAlien(enemy.x, enemy.y, enemy.height, enemy.width, enemy.ctx));
         }
         if (enemy.health > 0) {
-          newArr.push(enemy);
+          enemies.push(enemy);
           _this.CollidedBullet.forEach(function (bullet) {
             bullet.draw();
           });
@@ -271,11 +270,15 @@ var Game = function () {
         });
       });
 
-      // this.deadEnemies.forEach(enemy => {
-      //   enemy.draw();
-      // });
+      this.deadEnemies.forEach(function (enemy) {
+        if (!enemy.finished) {
+          deadEnemies.push(enemy);
+          enemy.draw();
+        }
+      });
 
-      this.enemies = newArr;
+      this.enemies = enemies;
+      this.deadEnemies = deadEnemies;
     }
   }, {
     key: "showLeaderBoard",
@@ -841,21 +844,26 @@ var DeadAlien = function () {
 
     this.animatedRow = 0;
     this.firstRowCounter = 0;
+    this.finished = false;
   }
 
   _createClass(DeadAlien, [{
     key: "draw",
     value: function draw() {
-      this.internalClick += 2;
-      this.animatedRow += 4;
+      if (this.firstRowCounter <= 5) {
+        this.internalClick += 2;
+        this.animatedRow += 2;
 
-      this.ctx.drawImage(this.image, this.row, 280, 50, 50, this.x, this.y, 50, 50);
+        this.ctx.drawImage(this.image, this.row, 280, 50, 50, this.x, this.y, 50, 50);
 
-      if (this.animatedRow === 60) {
-        this.animatedRow = 0;
-        this.firstRowCounter += 1;
-        this.firstRowCounter < 3 ? this.row += 50 : this.row += 65;
-        this.column = 0;
+        if (this.animatedRow === 60) {
+          this.animatedRow = 0;
+          this.firstRowCounter += 1;
+          this.firstRowCounter < 3 ? this.row += 50 : this.row += 65;
+          this.column = 0;
+        }
+      } else {
+        this.finished = true;
       }
     }
   }]);
