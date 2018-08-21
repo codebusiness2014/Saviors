@@ -296,14 +296,15 @@
     }))
   </script>
 
-  <script>$("#score-results").empty();
+  <script>
+    $("#score-results").empty();
     $("#score-results").append(`<tr class="firebase-score">
       <th>Rank<th>
       <th>Name</th>
       <th>Score</th>
     </tr>`);
     let results = [];
-    let orderedScore = [];
+    let orderedScore;
     let scores = firebase
       .database()
       .ref("/scores")
@@ -311,6 +312,7 @@
     let topFive = scores
       .once("value")
       .then(snapshot => {
+        orderedScore = [];
         snapshot.forEach(child => {
           orderedScore.unshift(child.val());
         });

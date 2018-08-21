@@ -283,14 +283,15 @@ var Game = function () {
   }, {
     key: "showLeaderBoard",
     value: function showLeaderBoard() {
-      $("#score-results").empty();
-      $("#score-results").append("<tr>\n    <th>Rank</th>\n    <th>Name</th>\n    <th>Score</th>\n    </tr>");
-      var orderedScore = [];
       var scores = firebase.database().ref("/scores").orderByChild("score");
-      var topFive = scores.once("value").then(function (snapshot) {
+      scores.once("value").then(function (snapshot) {
+        orderedScore = [];
         snapshot.forEach(function (child) {
           orderedScore.unshift(child.val());
         });
+        orderedScore = orderedScore.slice(0, 5);
+        $("#score-results").empty();
+        $("#score-results").append("<tr>\n        <th>Rank</th>\n        <th>Name</th>\n        <th>Score</th>\n        </tr>");
         for (var i = 0; i < 5; i++) {
           var player = orderedScore[i];
           var key = player.name;
