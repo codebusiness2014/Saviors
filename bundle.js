@@ -536,7 +536,7 @@ var Aircraft = function () {
   }, {
     key: "shootingAffect",
     value: function shootingAffect() {
-      var audio = new Audio("../music/laser.wav");
+      var audio = new Audio("../music/laser.mp3");
       audio.play();
     }
   }, {
