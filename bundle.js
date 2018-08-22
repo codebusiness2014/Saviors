@@ -684,8 +684,12 @@ var Enemy = function () {
   _createClass(Enemy, [{
     key: "explosionMusic",
     value: function explosionMusic() {
-      var audio = new Audio("../music/atari_boom.wav");
-      audio.play();
+      var audio = new Audio("music/atari_boom.wav");
+      audio.play().then(function () {
+        console.log("Explosion working");
+      }).catch(function (err) {
+        return console.log(err);
+      });
     }
   }, {
     key: "draw",
