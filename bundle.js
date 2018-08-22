@@ -684,7 +684,7 @@ var Enemy = function () {
   _createClass(Enemy, [{
     key: "explosionMusic",
     value: function explosionMusic() {
-      var audio = new Audio("music/atari_boom.wav");
+      var audio = new Audio("music/atari_boom.mp3");
       audio.play().then(function () {
         console.log("Explosion working");
       }).catch(function (err) {
