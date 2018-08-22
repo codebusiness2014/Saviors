@@ -1057,7 +1057,7 @@ var BigEnemy = function () {
   _createClass(BigEnemy, [{
     key: "explosionMusic",
     value: function explosionMusic() {
-      var audio = new Audio("../music/atari_boom.wav");
+      var audio = new Audio("music/atari_boom.wav");
       audio.play();
     }
   }, {
@@ -1077,17 +1077,6 @@ var BigEnemy = function () {
       }
 
       this.ctx.drawImage(this.image, 0, 30, 3500, 3500, this.x, this.y, 300, 300);
-      // if (this.animatedRow === 384 && this.column === 39) {
-      //   this.animatedRow = 0;
-      //   this.row = 0;
-      //   this.column = 0;
-      // } else if (this.animatedRow === 384) {
-      //   this.animatedRow = 0;
-      //   this.row = 0;
-      //   this.column += 43;
-      // } else if (this.animatedRow % 47 === 0) {
-      //   this.row += 47;
-      // }
     }
   }, {
     key: "move",
