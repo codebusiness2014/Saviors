@@ -322,7 +322,7 @@ var Game = function () {
           var score = _this2.score;
           var highScore = { name: name, score: score };
           scores.push(highScore);
-
+          _this2.score = 0;
           _this2.showLeaderBoard();
           document.getElementById("inputName").type = "hidden";
         }
