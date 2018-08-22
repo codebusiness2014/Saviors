@@ -165,7 +165,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.getElementById("inputName").addEventListener("keyup", function (e) {
     e.preventDefault();
-    console.log(GameInstance);
     if (e.keyCode === 13 && GameInstance) {
       var scores = firebase.database().ref("scores/");
       var name = document.getElementById("inputName").value;
@@ -196,7 +195,8 @@ document.addEventListener("DOMContentLoaded", function () {
         var ctxEnemy = canvasEnemy.getContext("2d");
         var ctxScore = canvasScore.getContext("2d");
         var ctxGameOver = canvasGameOver.getContext("2d");
-        GameInstance = new Game(ctx, _canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore, ctxGameOver, canvasGameOver, score).start();
+        GameInstance = new Game(ctx, _canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore, ctxGameOver, canvasGameOver, score);
+        GameInstance.start();
       }
     }
   });
@@ -329,31 +329,16 @@ var Game = function () {
   }, {
     key: "showInput",
     value: function showInput() {
-      var _this2 = this;
-
       var inputLength = document.getElementById("inputName").value.length;
       if (inputLength > 0) {
         document.getElementById("inputName").value = "";
       }
       document.getElementById("inputName").type = "text";
-      document.getElementById("inputName").addEventListener("keyup", function (e) {
-        e.preventDefault();
-        if (e.keyCode === 13) {
-          var scores = firebase.database().ref("scores/");
-          var name = document.getElementById("inputName").value;
-          var score = _this2.score;
-          var highScore = { name: name, score: score };
-          scores.push(highScore);
-          _this2.score = 0;
-          _this2.showLeaderBoard();
-          document.getElementById("inputName").type = "hidden";
-        }
-      });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this2 = this;
 
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctxEnemy.clearRect(0, 0, this.canvasEnemy.width, this.canvasEnemy.height);
@@ -425,12 +410,12 @@ var Game = function () {
       this.aircraft.bullets.forEach(function (bullet) {
         bullet.draw();
         bullet.move();
-        _this3.enemies.forEach(function (enemy) {
+        _this2.enemies.forEach(function (enemy) {
           enemy.collidedWith(bullet);
           bullet.collidedWith(enemy);
         });
         if (bullet.collided === true) {
-          _this3.CollidedBullet.push(new CollidedBullet(bullet.x, bullet.y, bullet.height, bullet.width, bullet.ctx));
+          _this2.CollidedBullet.push(new CollidedBullet(bullet.x, bullet.y, bullet.height, bullet.width, bullet.ctx));
         }
       });
 
@@ -701,9 +686,7 @@ var Enemy = function () {
     key: "explosionMusic",
     value: function explosionMusic() {
       var audio = new Audio("music/atari_boom.mp3");
-      audio.play().then(function () {
-        console.log("Explosion working");
-      }).catch(function (err) {
+      audio.play().then(function () {}).catch(function (err) {
         return console.log(err);
       });
     }
