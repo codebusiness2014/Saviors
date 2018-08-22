@@ -236,6 +236,7 @@ var Game = function () {
     this.restarted = false;
     this.showInput = this.showInput.bind(this);
     this.showLeaderBoard = this.showLeaderBoard.bind(this);
+    this.boss = 0;
   }
 
   _createClass(Game, [{
@@ -251,9 +252,13 @@ var Game = function () {
       var enemies = [];
       var deadEnemies = [];
       this.enemies.forEach(function (enemy) {
-        if (enemy.health === 0) {
-          _this.score += 20;
-          _this.deadEnemies.push(new DeadAlien(enemy.x, enemy.y, enemy.height, enemy.width, enemy.ctx));
+        if (enemy.health <= 0) {
+          if (enemy.type === "boss") {
+            _this.score += 40;
+          } else {
+            _this.score += 20;
+            _this.deadEnemies.push(new DeadAlien(enemy.x, enemy.y, enemy.height, enemy.width, enemy.ctx));
+          }
         }
         if (enemy.health > 0) {
           enemies.push(enemy);
@@ -350,6 +355,7 @@ var Game = function () {
       }
 
       this.internalClick += 1;
+      this.boss += 1;
 
       if (this.aircraft.health <= 0) {
         this.ctxGameOver.font = "30px games";
@@ -373,28 +379,31 @@ var Game = function () {
         this.ctxScore.strokeRect(20, 20, 100, 25);
       }
 
+      if (this.boss === 800) {
+        this.enemies.push(new BigEnemy(100, 100, 40, 40, this.ctxEnemy));
+        this.boss = 0;
+      }
+
       // if (this.score < 100) {
       // if (this.score <= 80) {
       if (this.internalClick === 200 && this.enemies.length < 10) {
-        // this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-        // this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-        this.enemies.push(new BigEnemy(100, 100, 40, 40, this.ctxEnemy));
+        this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+        this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
         this.internalClick = 0;
+      } else if (this.score <= 500) {
+        if (this.internalClick === 150 && this.enemies.length < 20) {
+          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+          this.internalClick = 0;
+        }
+      } else if (this.score <= 1000) {
+        if (this.internalClick === 100 && this.enemies.length < 30) {
+          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+          this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+          this.internalClick = 0;
+        }
       }
-      // } else if (this.score <= 100) {
-      //   if (this.internalClick === 150 && this.enemies.length < 20) {
-      //     // this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-      //     // this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-      //     this.internalClick = 0;
-      //   }
-      // } else if (this.score <= 1000) {
-      //   if (this.internalClick === 100 && this.enemies.length < 30) {
-      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-      //     this.internalClick = 0;
-      //   }
-      // }
-      // }
+
       // } else if (this.enemies.length < 10) {
       //   if (this.internalClick === 150) {
       //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
@@ -1056,7 +1065,7 @@ var BigEnemy = function () {
     this.left = false;
     this.right = false;
 
-    this.health = 100;
+    this.health = 150;
     this.shield = false;
 
     this.enemyDeath = 0;
