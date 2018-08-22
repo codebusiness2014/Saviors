@@ -204,6 +204,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Aircraft = __webpack_require__(3);
 var Enemies = __webpack_require__(4);
+var BigEnemy = __webpack_require__(8);
 var DeadAlien = __webpack_require__(5);
 var CollidedBullet = __webpack_require__(6);
 
@@ -373,11 +374,26 @@ var Game = function () {
       }
 
       // if (this.score < 100) {
+      // if (this.score <= 80) {
       if (this.internalClick === 200 && this.enemies.length < 10) {
-        this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-        this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+        // this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+        // this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+        this.enemies.push(new BigEnemy(100, 100, 40, 40, this.ctxEnemy));
         this.internalClick = 0;
       }
+      // } else if (this.score <= 100) {
+      //   if (this.internalClick === 150 && this.enemies.length < 20) {
+      //     // this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+      //     // this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+      //     this.internalClick = 0;
+      //   }
+      // } else if (this.score <= 1000) {
+      //   if (this.internalClick === 100 && this.enemies.length < 30) {
+      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
+      //     this.internalClick = 0;
+      //   }
+      // }
       // }
       // } else if (this.enemies.length < 10) {
       //   if (this.internalClick === 150) {
@@ -673,6 +689,7 @@ var Enemy = function () {
     this.enemyDeath = 0;
     this.enemyDeathCounter = 0;
     this.explosionMusic = this.explosionMusic.bind(this);
+    this.type = "alien";
   }
 
   _createClass(Enemy, [{
@@ -989,6 +1006,208 @@ var Background = function () {
 }();
 
 module.exports = Background;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Bullets = __webpack_require__(0);
+
+var BigEnemy = function () {
+  function BigEnemy(x, y, width, height, ctx) {
+    _classCallCheck(this, BigEnemy);
+
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.ctx = ctx;
+    this.draw = this.draw.bind(this);
+
+    this.image = new Image();
+    this.image.src = "../images/bigAlien2.png";
+
+    this.row = 0;
+    this.column = -2;
+
+    this.internalClick = 0;
+    this.x = Math.floor(Math.random() * this.ctx.canvas.width + 1);
+
+    this.bullets = [];
+    this.bulletConditional = this.bulletConditional.bind(this);
+    this.movement = this.movement.bind(this);
+    this.turnAllFalse = this.turnAllFalse.bind(this);
+    this.moveUp = this.moveUp.bind(this);
+    this.moveDown = this.moveDown.bind(this);
+    this.moveLeft = this.moveLeft.bind(this);
+    this.moveRight = this.moveRight.bind(this);
+
+    this.animatedRow = 0;
+
+    this.up = false;
+    this.down = false;
+    this.left = false;
+    this.right = false;
+
+    this.health = 100;
+    this.shield = false;
+
+    this.enemyDeath = 0;
+    this.enemyDeathCounter = 0;
+    this.explosionMusic = this.explosionMusic.bind(this);
+    this.type = "boss";
+  }
+
+  _createClass(BigEnemy, [{
+    key: "explosionMusic",
+    value: function explosionMusic() {
+      var audio = new Audio("../music/atari_boom.wav");
+      audio.play();
+    }
+  }, {
+    key: "draw",
+    value: function draw() {
+      this.bulletConditional();
+      this.internalClick += 2;
+      this.animatedRow += 4;
+
+      if (this.internalClick % 500 === 0) {
+        this.internalClick = 0;
+        this.bullets.push(new Bullets(this.x + 30, this.y + 35, 15, 15, this.ctx));
+      }
+
+      if (this.internalClick % 200 === 0) {
+        this.movement();
+      }
+
+      this.ctx.drawImage(this.image, 0, 30, 3500, 3500, this.x, this.y, 300, 300);
+      // if (this.animatedRow === 384 && this.column === 39) {
+      //   this.animatedRow = 0;
+      //   this.row = 0;
+      //   this.column = 0;
+      // } else if (this.animatedRow === 384) {
+      //   this.animatedRow = 0;
+      //   this.row = 0;
+      //   this.column += 43;
+      // } else if (this.animatedRow % 47 === 0) {
+      //   this.row += 47;
+      // }
+    }
+  }, {
+    key: "move",
+    value: function move() {
+      if (this.y < this.ctx.canvas.height / 2) {
+        this.y += 2;
+      }
+
+      if (this.y > 10) {
+        if (this.left) {
+          this.moveLeft();
+        } else if (this.right) {
+          this.moveRight();
+        } else if (this.up) {
+          this.moveUp();
+        } else if (this.down) {
+          this.moveDown();
+        }
+      }
+    }
+  }, {
+    key: "movement",
+    value: function movement() {
+      this.turnAllFalse();
+
+      var moveArr = ["left", "up", "down", "right"];
+      var choice = moveArr[Math.floor(Math.random() * moveArr.length)];
+      switch (choice) {
+        case "left":
+          this.left = true;
+          break;
+        case "up":
+          this.up = true;
+          break;
+        case "down":
+          this.down = true;
+          break;
+        case "right":
+          this.right = true;
+          break;
+        default:
+      }
+    }
+  }, {
+    key: "collidedWith",
+    value: function collidedWith(object) {
+      if (this.x < object.x + object.width && this.x + this.width > object.x && this.y < object.y + object.height && this.height + this.y > object.y) {
+        this.health -= 20;
+        this.shield = true;
+        this.explosionMusic();
+        this.ctx.drawImage(this.image, this.row, 0, 100, 100, this.x, this.y, 50, 50);
+      }
+    }
+  }, {
+    key: "turnAllFalse",
+    value: function turnAllFalse() {
+      this.left = false;
+      this.right = false;
+      this.up = false;
+      this.down = false;
+    }
+  }, {
+    key: "moveLeft",
+    value: function moveLeft() {
+      if (this.x > 0) {
+        this.x -= 2;
+      }
+    }
+  }, {
+    key: "moveUp",
+    value: function moveUp() {
+      if (this.y > 0) {
+        this.y -= 2;
+      }
+    }
+  }, {
+    key: "moveDown",
+    value: function moveDown() {
+      if (this.y < this.ctx.canvas.height / 1.4) {
+        this.y += 2;
+      }
+    }
+  }, {
+    key: "moveRight",
+    value: function moveRight() {
+      if (this.x < this.ctx.canvas.width - 50) {
+        this.x += 2;
+      }
+    }
+  }, {
+    key: "bulletConditional",
+    value: function bulletConditional() {
+      var _this = this;
+
+      var newArr = [];
+      this.bullets.forEach(function (bullet) {
+        if (bullet.y < _this.ctx.canvas.height) {
+          newArr.push(bullet);
+        }
+      });
+
+      this.bullets = newArr;
+    }
+  }]);
+
+  return BigEnemy;
+}();
+
+module.exports = BigEnemy;
 
 /***/ })
 /******/ ]);
