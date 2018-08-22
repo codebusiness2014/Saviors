@@ -404,26 +404,6 @@ var Game = function () {
         }
       }
 
-      // } else if (this.enemies.length < 10) {
-      //   if (this.internalClick === 150) {
-      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-      //     this.internalClick = 0;
-      //   }
-      // } else if (this.enemies.length < 10) {
-      //   if (this.internalClick === 100) {
-      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-      //     this.internalClick = 0;
-      //   }
-      // } else if (this.enemies.length < 10) {
-      //   if (this.internalClick === 50 && this.enemies.length < 40) {
-      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-      //     this.enemies.push(new Enemies(100, 100, 40, 40, this.ctxEnemy));
-      //     this.internalClick = 0;
-      //   }
-      // }
-
       this.enemiesRender();
 
       this.aircraft.bullets.forEach(function (bullet) {
@@ -1041,7 +1021,7 @@ var BigEnemy = function () {
     this.draw = this.draw.bind(this);
 
     this.image = new Image();
-    this.image.src = "../images/bigAlien2.png";
+    this.image.src = "images/bigAlien2.png";
 
     this.row = 0;
     this.column = -2;
