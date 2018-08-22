@@ -165,6 +165,7 @@ document.addEventListener("DOMContentLoaded", function () {
   preGame();
   document.addEventListener("keypress", function (e) {
     if (e.key === "r" && document.getElementById("inputName").type === "hidden") {
+      var score = 0;
       var canvasStart = document.getElementById("start");
       if (canvasStart.getContext) {
         var ctxStart = canvasStart.getContext("2d");
@@ -179,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var ctxEnemy = canvasEnemy.getContext("2d");
         var ctxScore = canvasScore.getContext("2d");
         var ctxGameOver = canvasGameOver.getContext("2d");
-        new Game(ctx, _canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore, ctxGameOver, canvasGameOver).start();
+        new Game(ctx, _canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore, ctxGameOver, canvasGameOver, score).start();
       }
     }
   });
@@ -207,7 +208,7 @@ var DeadAlien = __webpack_require__(5);
 var CollidedBullet = __webpack_require__(6);
 
 var Game = function () {
-  function Game(ctx, canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore, ctxGameOver, canvasGameOver) {
+  function Game(ctx, canvas, ctxEnemy, canvasEnemy, ctxScore, canvasScore, ctxGameOver, canvasGameOver, score) {
     _classCallCheck(this, Game);
 
     this.ctx = ctx;
@@ -229,7 +230,7 @@ var Game = function () {
     this.CollidedBullet = [];
 
     this.enemiesRender = this.enemiesRender.bind(this);
-    this.score = 0;
+    this.score = score;
     this.enemyCounter = 0;
     this.restarted = false;
     this.showInput = this.showInput.bind(this);
@@ -308,6 +309,10 @@ var Game = function () {
     value: function showInput() {
       var _this2 = this;
 
+      var inputLength = document.getElementById("inputName").value.length;
+      if (inputLength > 0) {
+        document.getElementById("inputName").value = "";
+      }
       document.getElementById("inputName").type = "text";
       document.getElementById("inputName").addEventListener("keyup", function (e) {
         e.preventDefault();
@@ -318,8 +323,8 @@ var Game = function () {
           var highScore = { name: name, score: score };
           scores.push(highScore);
 
-          document.getElementById("inputName").type = "hidden";
           _this2.showLeaderBoard();
+          document.getElementById("inputName").type = "hidden";
         }
       });
     }
