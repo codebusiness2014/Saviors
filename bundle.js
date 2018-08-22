@@ -329,29 +329,31 @@ var Game = function () {
   }, {
     key: "showInput",
     value: function showInput() {
+      var _this2 = this;
+
       var inputLength = document.getElementById("inputName").value.length;
       if (inputLength > 0) {
         document.getElementById("inputName").value = "";
       }
       document.getElementById("inputName").type = "text";
-      // document.getElementById("inputName").addEventListener("keyup", e => {
-      //   e.preventDefault();
-      //   if (e.keyCode === 13) {
-      //     const scores = firebase.database().ref("scores/");
-      //     let name = document.getElementById("inputName").value;
-      //     let score = this.score;
-      //     let highScore = { name, score };
-      //     scores.push(highScore);
-      //     this.score = 0;
-      //     this.showLeaderBoard();
-      //     document.getElementById("inputName").type = "hidden";
-      //   }
-      // });
+      document.getElementById("inputName").addEventListener("keyup", function (e) {
+        e.preventDefault();
+        if (e.keyCode === 13) {
+          var scores = firebase.database().ref("scores/");
+          var name = document.getElementById("inputName").value;
+          var score = _this2.score;
+          var highScore = { name: name, score: score };
+          scores.push(highScore);
+          _this2.score = 0;
+          _this2.showLeaderBoard();
+          document.getElementById("inputName").type = "hidden";
+        }
+      });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctxEnemy.clearRect(0, 0, this.canvasEnemy.width, this.canvasEnemy.height);
@@ -423,12 +425,12 @@ var Game = function () {
       this.aircraft.bullets.forEach(function (bullet) {
         bullet.draw();
         bullet.move();
-        _this2.enemies.forEach(function (enemy) {
+        _this3.enemies.forEach(function (enemy) {
           enemy.collidedWith(bullet);
           bullet.collidedWith(enemy);
         });
         if (bullet.collided === true) {
-          _this2.CollidedBullet.push(new CollidedBullet(bullet.x, bullet.y, bullet.height, bullet.width, bullet.ctx));
+          _this3.CollidedBullet.push(new CollidedBullet(bullet.x, bullet.y, bullet.height, bullet.width, bullet.ctx));
         }
       });
 
